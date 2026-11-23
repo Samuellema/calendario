@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>¿Quedamos?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --mar:#1F3A4A;      /* Atlántico */
+  --granito:#5E6B73;
+  --espuma:#EEF3F2;   /* fondo */
+  --papel:#FFFFFF;
+  --toxo:#E3B22C;     /* flor del tojo */
+  --toxo-suave:#F7E7B4;
+  --alga:#3E7C7A;
+  --linea:#CBD6D6;
+  --texto:#16262F;
+  --bg:var(--espuma);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E1C24; --papel:#15262F; --texto:#E4ECEE; --granito:#9AA9B0;
+    --linea:#2A3F4A; --mar:#BFD6DF; --toxo-suave:#4A3D14; --alga:#7FBDB9;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E1C24; --papel:#15262F; --texto:#E4ECEE; --granito:#9AA9B0;
+  --linea:#2A3F4A; --mar:#BFD6DF; --toxo-suave:#4A3D14; --alga:#7FBDB9;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--bg);color:var(--texto);
+  font-family:"Bricolage Grotesque",system-ui,sans-serif;
+  font-size:17px;line-height:1.5;
+}
+main{max-width:640px;margin:0 auto;padding:0 16px 120px}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--toxo);outline-offset:2px;border-radius:6px}
+
+/* Título de arriba */
+h2{font-size:clamp(34px,9vw,48px);line-height:1;letter-spacing:-.03em;margin:40px 0 8px;color:var(--mar);font-weight:800}
+.sub{margin:0 0 20px;color:var(--granito)}
+
+/* Planes de un día */
+.franja{margin:0 0 16px}
+.franja-t{margin:0 0 8px;font-weight:600}
+.franja-t .hora{font-weight:400;color:var(--granito);margin-left:6px}
+
+.chip{
+  border:2px solid var(--linea);background:var(--papel);border-radius:999px;
+  padding:10px 18px;cursor:pointer;min-height:44px;
+}
+.chip[aria-pressed="true"]{background:var(--toxo);border-color:var(--toxo);color:#1B1A10;font-weight:600}
+.chip.otro{background:transparent;border-style:dashed;color:var(--granito)}
+.chip.otro[aria-pressed="true"]{background:var(--linea);border-style:solid;color:var(--texto)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+
+/* La costa: ruta de norte a sur */
+.costa{list-style:none;margin:0;padding:0 0 0 6px;position:relative}
+.costa::before{
+  content:"";position:absolute;left:17px;top:20px;bottom:20px;width:0;
+  border-left:3px dotted var(--alga);
+}
+.lugar{
+  display:flex;gap:14px;align-items:flex-start;width:100%;text-align:left;
+  background:none;border:0;padding:10px 8px 10px 0;cursor:pointer;border-radius:12px;
+}
+.lugar .punto{
+  flex:none;width:24px;height:24px;border-radius:50%;margin-top:2px;position:relative;z-index:1;
+  background:var(--bg);border:3px solid var(--alga);
+}
+.lugar strong{display:block;font-size:19px;font-weight:600;line-height:1.25}
+.lugar small{display:block;color:var(--granito);font-size:15px;line-height:1.4;margin-top:2px}
+.lugar[aria-pressed="true"]{background:var(--toxo-suave)}
+.lugar[aria-pressed="true"] .punto{background:var(--toxo);border-color:var(--toxo)}
+.lugar:hover .punto{border-color:var(--toxo)}
+.costa-nota{font-size:14px;color:var(--granito);margin:6px 0 0 44px}
+
+/* Calendario */
+.cal{background:var(--papel);border-radius:18px;padding:16px;border:1px solid var(--linea)}
+.cal-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.cal-top strong{font-size:20px}
+.nav{width:44px;height:44px;border-radius:50%;border:1px solid var(--linea);background:transparent;cursor:pointer;font-size:20px}
+.nav:disabled{opacity:.3;cursor:default}
+.rejilla{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
+.rejilla .ds{font-size:13px;color:var(--granito);padding:4px 0}
+.d{
+  aspect-ratio:1;border:0;border-radius:12px;background:transparent;cursor:pointer;
+  position:relative;font-size:16px;min-height:40px;
+}
+.d.finde{background:color-mix(in srgb,var(--alga) 14%,transparent)}
+.d.hoy{box-shadow:inset 0 0 0 2px var(--mar)}
+.d.sel{background:var(--mar);color:var(--bg);font-weight:600}
+.d:disabled{color:var(--linea);cursor:default;background:transparent}
+.d.plan::after{
+  content:"";position:absolute;left:50%;bottom:6px;width:6px;height:6px;margin-left:-3px;
+  border-radius:50%;background:var(--toxo);
+}
+.panel{margin-top:18px}
+.panel h3{font-size:24px;margin:0 0 12px;font-weight:800;letter-spacing:-.02em}
+
+/* Resumen */
+.resumen{
+  position:fixed;left:0;right:0;bottom:0;z-index:5;
+  background:var(--mar);color:var(--espuma);
+}
+:root[data-theme="dark"] .resumen{background:#0A151B}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .resumen{background:#0A151B;color:var(--texto)}}
+.resumen-in{max-width:640px;margin:0 auto;padding:12px 16px calc(12px + env(safe-area-inset-bottom))}
+.resumen details summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:44px}
+.resumen summary::-webkit-details-marker{display:none}
+.resumen ul{margin:8px 0 12px;padding-left:20px;max-height:40vh;overflow:auto}
+.resumen li{margin:4px 0}
+.acciones{display:flex;gap:8px}
+.acciones .prim{flex:1}
+.btn{border:0;border-radius:999px;padding:12px 20px;min-height:44px;cursor:pointer;font-weight:600}
+.btn.prim{background:var(--toxo);color:#1B1A10}
+.btn.sec{background:transparent;color:inherit;box-shadow:inset 0 0 0 2px currentColor}
+.btn:disabled{opacity:.4;cursor:default}
+.aviso{font-size:14px;opacity:.8;margin:0}
+
+/* Puerta */
+.puerta{position:fixed;inset:0;z-index:10;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:16px}
+.puerta form{max-width:360px;width:100%}
+.puerta h1{font-size:40px;line-height:1;margin:0 0 10px;color:var(--mar);letter-spacing:-.03em}
+.puerta p{color:var(--granito);margin:0 0 18px}
+.puerta input{
+  width:100%;font:inherit;padding:12px 14px;border-radius:12px;border:2px solid var(--linea);
+  background:var(--papel);color:var(--texto);margin-bottom:10px;
+}
+.puerta .error{color:#B3261E;min-height:1.5em;margin:0 0 8px;font-size:15px}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+
+<div class="puerta" id="puerta" hidden>
+  <form id="form-puerta">
+    <h1>Hola</h1>
+    <p>Esto es solo para ti. Escribe nuestra palabra secreta para entrar.</p>
+    <label for="clave" class="sr" style="position:absolute;left:-9999px">Palabra secreta</label>
+    <input id="clave" type="password" autocomplete="off" placeholder="Palabra secreta">
+    <p class="error" id="error" role="alert"></p>
+    <button class="btn prim" type="submit">Entrar</button>
+  </form>
+</div>
+
+<main id="app">
+  <section aria-labelledby="t-cal">
+    <h2 id="t-cal">Disponibilidad</h2>
+    <p class="sub">Toca un día para ver los planes.</p>
+    <div class="cal">
+      <div class="cal-top">
+        <button class="nav" id="prev" aria-label="Mes anterior">‹</button>
+        <strong id="mes" aria-live="polite"></strong>
+        <button class="nav" id="next" aria-label="Mes siguiente">›</button>
+      </div>
+      <div class="rejilla" id="rejilla"></div>
+    </div>
+    <div class="panel" id="panel"></div>
+  </section>
+</main>
+
+<aside class="resumen" aria-label="Tus planes">
+  <div class="resumen-in">
+    <details id="det">
+      <summary><span id="cuenta">Todavía no has elegido nada</span><span aria-hidden="true">▴</span></summary>
+      <ul id="lista"></ul>
+    </details>
+    <div class="acciones">
+      <button class="btn prim" id="enviar">Enviar respuesta</button>
+    </div>
+    <p class="aviso" id="estado" role="status"></p>
+  </div>
+</aside>
+
+<script>
+/* ===== Ajustes =====
+   CLAVE: la palabra que tiene que escribir para entrar.
+   Déjala vacía ("") para quitar la pantalla de entrada. */
+const CLAVE = "tomatiño";
+
+/* CLAVE_ENVIO: la clave de Web3Forms (web3forms.com).
+   Las respuestas llegan al correo con el que creaste esa clave. */
+const CLAVE_ENVIO = "4e3be7f5-36d5-445c-9673-c2d2b2697e13";
+
+const LUGARES = [ // de norte a sur por la costa
+  {n:"Praia dos Cristais", z:"Laxe", t:"Una playa hecha de cristalitos pulidos por el mar."},
+  {n:"Faro Vilán", z:"Camariñas", t:"Faro sobre los acantilados, con vistas al mar abierto."},
+  {n:"Virxe da Barca", z:"Muxía", t:"El santuario entre las rocas, donde rompen las olas."},
+  {n:"Cabo Fisterra", z:"Fisterra", t:"El “fin del mundo”: faro y puesta de sol."},
+  {n:"Fervenza do Ézaro", z:"Dumbría", t:"Una cascada que cae directamente al mar."}
+];
+
+/* ===== Utilidades ===== */
+const $ = s => document.querySelector(s);
+const pad = n => String(n).padStart(2,"0");
+const clave = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const deClave = k => { const [y,m,d]=k.split("-").map(Number); return new Date(y,m-1,d); };
+const hoy = (()=>{const d=new Date();d.setHours(0,0,0,0);return d;})();
+const masDias = (d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x;};
+const cap = s => s.charAt(0).toUpperCase()+s.slice(1);
+const fechaLarga = d => cap(d.toLocaleDateString("es-ES",{weekday:"long",day:"numeric",month:"long"}).replace(",",""));
+const nombreDia = d => cap(d.toLocaleDateString("es-ES",{weekday:"long"}));
+
+function leer(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}}
+function guardar(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+
+let planes = leer("citas-v1") || {};   // { "2026-11-28": {manana:"...", tarde:"...", otro:true} }
+// Borra planes de días ya pasados
+for (const k in planes) if (deClave(k) < hoy) delete planes[k];
+
+/* ===== Qué se puede hacer cada día ===== */
+function franjas(d){
+  const w = d.getDay();
+  if (w===5) return [{s:"tarde",t:"Por la tarde",h:"16:00",ops:["Ir a tomar algo"]}];
+  if (w===6 || w===0) return [
+    {s:"manana",t:"Por la mañana",h:"10:00",ops:["Ir a tomar algo"]},
+    {s:"tarde",t:"Por la tarde",h:"16:00",lugares:true}
+  ];
+  return [
+    {s:"manana",t:"Por la mañana",h:"10:00",ops:["Quedar"]},
+    {s:"tarde",t:"Por la tarde",h:"16:00",ops:["Quedar"]}
+  ];
+}
+
+function esc(s){return s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+
+function planesDelDia(d){
+  const k = clave(d), p = planes[k] || {}, pasado = d < hoy;
+  const dis = pasado ? " disabled" : "";
+  let h = "";
+  for (const f of franjas(d)){
+    h += `<div class="franja"><p class="franja-t">${f.t}<span class="hora">${f.h}</span></p>`;
+    if (f.lugares){
+      h += `<ol class="costa">` + LUGARES.map(l =>
+        `<li><button class="lugar" data-k="${k}" data-s="tarde" data-v="${esc(l.n)}" aria-pressed="${p.tarde===l.n}"${dis}>
+          <span class="punto" aria-hidden="true"></span>
+          <span><strong>${l.n}</strong><small>${l.z}. ${l.t}</small></span></button></li>`).join("") + `</ol>
+        <p class="costa-nota">Ordenados de norte a sur por la costa.</p>`;
+    } else {
+      h += `<div class="chips">` + f.ops.map(o =>
+        `<button class="chip" data-k="${k}" data-s="${f.s}" data-v="${esc(o)}" aria-pressed="${p[f.s]===o}"${dis}>${o}</button>`).join("") + `</div>`;
+    }
+    h += `</div>`;
+  }
+  h += `<div class="chips"><button class="chip otro" data-k="${k}" data-s="otro" data-v="1" aria-pressed="${!!p.otro}"${dis}>Mejor otro día</button></div>`;
+  return h;
+}
+
+/* ===== Calendario ===== */
+let vista = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+let elegido = null;
+
+function pintarCal(){
+  $("#mes").textContent = cap(vista.toLocaleDateString("es-ES",{month:"long"})) + " " + vista.getFullYear();
+  $("#prev").disabled = vista <= new Date(hoy.getFullYear(),hoy.getMonth(),1);
+  let h = ["L","M","X","J","V","S","D"].map(x=>`<span class="ds" aria-hidden="true">${x}</span>`).join("");
+  const hueco = (vista.getDay()+6)%7;
+  for (let i=0;i<hueco;i++) h += `<span></span>`;
+  const n = new Date(vista.getFullYear(),vista.getMonth()+1,0).getDate();
+  for (let i=1;i<=n;i++){
+    const d = new Date(vista.getFullYear(),vista.getMonth(),i), k = clave(d), w = d.getDay();
+    const cls = ["d"];
+    if (w===5||w===6||w===0) cls.push("finde");
+    if (+d===+hoy) cls.push("hoy");
+    if (planes[k]) cls.push("plan");
+    if (elegido===k) cls.push("sel");
+    h += `<button class="${cls.join(" ")}" data-dia="${k}" aria-label="${fechaLarga(d)}${planes[k]?", con plan":""}"${d<hoy?" disabled":""}>${i}</button>`;
+  }
+  $("#rejilla").innerHTML = h;
+  $("#panel").innerHTML = elegido ? `<h3>${fechaLarga(deClave(elegido))}</h3>${planesDelDia(deClave(elegido))}` : "";
+}
+
+/* ===== Resumen y envío ===== */
+function lineas(){
+  const out = [];
+  Object.keys(planes).sort().forEach(k=>{
+    const p = planes[k], f = fechaLarga(deClave(k));
+    if (p.otro){ out.push(`${f}: mejor otro día`); return; }
+    if (p.manana) out.push(`${f}, 10:00: ${p.manana.toLowerCase()}`);
+    if (p.tarde){
+      const esLugar = LUGARES.some(l=>l.n===p.tarde);
+      out.push(`${f}, 16:00: ${esLugar ? "ir a "+p.tarde : p.tarde.toLowerCase()}`);
+    }
+  });
+  return out;
+}
+function mensaje(){ return "Mis planes para quedar:\n\n" + lineas().map(l=>"• "+l).join("\n"); }
+
+function pintarResumen(){
+  const ls = lineas();
+  $("#cuenta").textContent = ls.length ? (ls.length===1 ? "1 plan elegido" : `${ls.length} planes elegidos`) : "Todavía no has elegido nada";
+  $("#lista").innerHTML = ls.length ? ls.map(l=>`<li>${esc(l)}</li>`).join("") : `<li style="list-style:none;margin-left:-20px">Toca un plan para añadirlo aquí.</li>`;
+  $("#enviar").disabled = !ls.length;
+}
+
+function pintarTodo(){ pintarCal(); pintarResumen(); }
+
+/* ===== Eventos ===== */
+document.addEventListener("click", e=>{
+  const b = e.target.closest("[data-k]");
+  if (b){
+    const k=b.dataset.k, s=b.dataset.s, v=b.dataset.v;
+    const p = planes[k] || {};
+    if (s==="otro"){ planes[k] = p.otro ? {} : {otro:true}; }
+    else { delete p.otro; if (p[s]===v) delete p[s]; else p[s]=v; planes[k]=p; }
+    if (!Object.keys(planes[k]).length) delete planes[k];
+    guardar("citas-v1", planes);
+    pintarTodo();
+    const sel = `#panel [data-k="${k}"][data-s="${s}"][data-v="${CSS.escape(v)}"]`;
+    const nb = document.querySelector(sel); if (nb) nb.focus({preventScroll:true});
+    return;
+  }
+  const dd = e.target.closest("[data-dia]");
+  if (dd){
+    elegido = dd.dataset.dia; pintarCal();
+    const f = document.querySelector(`[data-dia="${elegido}"]`); if (f) f.focus({preventScroll:true});
+    $("#panel").scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto":"smooth", block:"nearest"});
+  }
+});
+$("#prev").onclick = ()=>{ vista = new Date(vista.getFullYear(),vista.getMonth()-1,1); pintarCal(); };
+$("#next").onclick = ()=>{ vista = new Date(vista.getFullYear(),vista.getMonth()+1,1); pintarCal(); };
+
+/* ===== Enviar respuesta =====
+   Manda el resumen a Web3Forms, que lo reenvía a tu correo. */
+$("#enviar").onclick = async ()=>{
+  const b = $("#enviar"), estado = $("#estado");
+  if (!CLAVE_ENVIO){ estado.textContent = "Falta poner la clave de envío en el código (CLAVE_ENVIO)."; return; }
+  b.disabled = true; b.textContent = "Enviando…"; estado.textContent = "";
+  try {
+    const r = await fetch("https://api.web3forms.com/submit", {
+      method: "POST",
+      headers: {"Content-Type":"application/json", "Accept":"application/json"},
+      body: JSON.stringify({
+        access_key: CLAVE_ENVIO,
+        subject: "Respuesta: planes para quedar",
+        from_name: "Página de citas",
+        message: mensaje()
+      })
+    });
+    const res = await r.json();
+    if (!res.success) throw new Error(res.message);
+    b.textContent = "Respuesta enviada";
+    estado.textContent = "¡Listo! Ya le ha llegado.";
+  } catch(e){
+    b.textContent = "Enviar respuesta"; b.disabled = false;
+    estado.textContent = "No se ha podido enviar. Revisa la conexión a internet y vuelve a pulsar.";
+  }
+};
+
+/* ===== Puerta ===== */
+function abrir(){ $("#puerta").hidden = true; }
+if (CLAVE){
+  let ok=false; try{ ok = sessionStorage.getItem("citas-ok")==="1"; }catch(e){}
+  if (!ok){ $("#puerta").hidden = false; setTimeout(()=>$("#clave").focus(),50); }
+  $("#form-puerta").addEventListener("submit", e=>{
+    e.preventDefault();
+    // Da igual mayúsculas, minúsculas, tildes o ñ/n: "TOMATINO" = "tomatiño"
+    const limpia = s => s.trim().toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
+    if (limpia($("#clave").value) === limpia(CLAVE)){
+      try{ sessionStorage.setItem("citas-ok","1"); }catch(e){}
+      abrir();
+    } else {
+      $("#error").textContent = "Esa no es la palabra. Prueba otra vez.";
+      $("#clave").select();
+    }
+  });
+}
+
+pintarTodo();
+</script>
+</body>
+</html>
