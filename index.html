@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="es">
+<html lang="gl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>¿Quedamos?</title>
+<title>Quedamos?</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap" rel="stylesheet">
@@ -13,8 +13,8 @@
   --granito:#5E6B73;
   --espuma:#EEF3F2;   /* fondo */
   --papel:#FFFFFF;
-  --toxo:#E3B22C;     /* flor del tojo */
-  --toxo-suave:#F7E7B4;
+  --toxo:#1F51FF;     /* azul eléctrico principal */
+  --toxo-suave:#DCE5FF;   /* azul eléctrico clarito */
   --alga:#3E7C7A;
   --linea:#CBD6D6;
   --texto:#16262F;
@@ -23,12 +23,12 @@
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     --bg:#0E1C24; --papel:#15262F; --texto:#E4ECEE; --granito:#9AA9B0;
-    --linea:#2A3F4A; --mar:#BFD6DF; --toxo-suave:#4A3D14; --alga:#7FBDB9;
+    --linea:#2A3F4A; --mar:#BFD6DF; --toxo-suave:#1A2A66; --alga:#7FBDB9;
   }
 }
 :root[data-theme="dark"]{
   --bg:#0E1C24; --papel:#15262F; --texto:#E4ECEE; --granito:#9AA9B0;
-  --linea:#2A3F4A; --mar:#BFD6DF; --toxo-suave:#4A3D14; --alga:#7FBDB9;
+  --linea:#2A3F4A; --mar:#BFD6DF; --toxo-suave:#1A2A66; --alga:#7FBDB9;
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
@@ -40,13 +40,39 @@ body{
 main{max-width:640px;margin:0 auto;padding:0 16px 120px}
 button{font:inherit;color:inherit}
 :focus-visible{outline:3px solid var(--toxo);outline-offset:2px;border-radius:6px}
+button{-webkit-tap-highlight-color:transparent}   /* en el móvil, que al tocar no salga un recuadro de color */
 
 /* Título de arriba */
-h2{font-size:clamp(34px,9vw,48px);line-height:1;letter-spacing:-.03em;margin:40px 0 8px;color:var(--mar);font-weight:800}
-.sub{margin:0 0 20px;color:var(--granito)}
+h2{font-size:clamp(34px,9vw,48px);line-height:1;letter-spacing:-.03em;margin:40px 0 8px;color:var(--mar);font-weight:800;text-align:center}
+.sub{margin:0 0 20px;color:var(--granito);text-align:center}
 
 /* Planes de un día */
 .franja{margin:0 0 16px}
+.franja.pasada{opacity:.45}
+.atardecer{margin:8px 0 6px 38px;padding:10px 14px;border-radius:12px;font-size:15px;color:#3B1530;
+  background:linear-gradient(100deg,#FFB86B 0%,#FF8A80 50%,#E58AC8 100%);}   /* colores de atardecer: naranja → coral → rosa */
+.franja > .atardecer, .franja > .clima{margin-left:0}   /* debajo de un botón suelto, sin sangría */
+/* Recuadro del tiempo: azul clarito, con el dato principal grande y lluvia/viento debajo en pequeño */
+.clima{margin:8px 0 6px 38px;padding:10px 14px;border-radius:12px;font-size:15px;color:#0E1B4D;background:var(--toxo-suave)}
+.clima small{display:block;font-size:13px;opacity:.8;margin-top:2px}
+/* Caixa para escribir en "Outra opción" */
+.outra{display:block;margin:8px 0 6px 38px;width:calc(100% - 38px);padding:10px 12px;font:inherit;font-size:16px;
+  border:2px solid var(--toxo);border-radius:12px;background:var(--papel);color:var(--texto)}
+/* Desplegables "A Coruña" e "Costa" dentro de "Elixes ti" */
+.categoria{margin:10px 0;border:2px solid var(--linea);border-radius:14px;background:var(--papel)}
+.categoria summary{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;cursor:pointer;font-weight:700;color:var(--mar);list-style:none}
+.categoria summary::-webkit-details-marker{display:none}
+.categoria summary::after{content:"▾";font-size:18px;transition:transform .2s}
+.categoria[open] summary::after{transform:rotate(180deg)}
+.categoria summary small{margin-left:auto;font-weight:600;color:var(--toxo)}
+.categoria .costa{padding:0 10px 8px 12px}
+
+/* Sticker do venres: imaxe pequena á esquerda e o texto ao lado */
+.sticker{display:flex;align-items:center;gap:12px;margin:10px 0 6px;padding:10px 14px;border-radius:14px;background:var(--toxo-suave)}
+.sticker img{width:90px;height:auto;flex:none;border-radius:10px}
+.sticker img.fondo-branco{mix-blend-mode:multiply}   /* só para imaxes con fondo branco: o branco desaparece */
+.sticker p{margin:0;font-size:15px;font-weight:600;color:#0E1B4D}
+.chip:disabled,.lugar:disabled{cursor:default}
 .franja-t{margin:0 0 8px;font-weight:600}
 .franja-t .hora{font-weight:400;color:var(--granito);margin-left:6px}
 
@@ -54,10 +80,11 @@ h2{font-size:clamp(34px,9vw,48px);line-height:1;letter-spacing:-.03em;margin:40p
   border:2px solid var(--linea);background:var(--papel);border-radius:999px;
   padding:10px 18px;cursor:pointer;min-height:44px;
 }
-.chip[aria-pressed="true"]{background:var(--toxo);border-color:var(--toxo);color:#1B1A10;font-weight:600}
+.chip[aria-pressed="true"]{background:var(--toxo);border-color:var(--toxo);color:#fff;font-weight:600}
 .chip.otro{background:transparent;border-style:dashed;color:var(--granito)}
 .chip.otro[aria-pressed="true"]{background:var(--linea);border-style:solid;color:var(--texto)}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
+.semana{display:flex;justify-content:center;margin:18px 0 0}   /* botón "Esta semana imposible", centrado debajo del calendario */
 
 /* La costa: ruta de norte a sur */
 .costa{list-style:none;margin:0;padding:0 0 0 6px;position:relative}
@@ -75,30 +102,67 @@ h2{font-size:clamp(34px,9vw,48px);line-height:1;letter-spacing:-.03em;margin:40p
 }
 .lugar strong{display:block;font-size:19px;font-weight:600;line-height:1.25}
 .lugar small{display:block;color:var(--granito);font-size:15px;line-height:1.4;margin-top:2px}
-.lugar[aria-pressed="true"]{background:var(--toxo-suave)}
+.lugar[aria-pressed="true"] strong{color:var(--toxo)}   /* sitio elegido: sin recuadro, solo el punto relleno y el nombre en azul */
 .lugar[aria-pressed="true"] .punto{background:var(--toxo);border-color:var(--toxo)}
 .lugar:hover .punto{border-color:var(--toxo)}
 .costa-nota{font-size:14px;color:var(--granito);margin:6px 0 0 44px}
 
 /* Calendario */
-.cal{background:var(--papel);border-radius:18px;padding:16px;border:1px solid var(--linea)}
+/* Fondo del calendario: la foto, con una capa clara por encima para que se lean los números.
+   Sube el 78% para que la foto se vea menos, o bájalo para que se vea más. */
+.cal{
+  position:relative;isolation:isolate;overflow:hidden;
+  background:var(--papel);
+  border-radius:18px;padding:16px;border:1px solid var(--linea)
+}
+/* Capa 1 (::before): la foto, con más brillo */
+.cal::before{
+  content:"";position:absolute;inset:0;z-index:-1;
+  background:url("fondo-calendario.jpg") 30% 30% / cover no-repeat;   /* 1er % = izquierda-derecha (más bajo = foto más a la derecha) */
+  filter:brightness(1.4);   /* brillo: 1 = normal, 1.4 = 40% más brillo */
+}
+/* Capa 2 (::after): la capa clara encima de la foto, para que se lean los números */
+.cal::after{
+  content:"";position:absolute;inset:0;z-index:-1;
+  background:color-mix(in srgb, var(--papel) 70%, transparent);
+}
+
+/* ===== Otros fondos (se eligen con FONDO en los ajustes del JavaScript) ===== */
+
+/* Fondo "atardecer": degradado naranja → rosa → morado, en tonos suaves para que se lean los números */
+.cal[data-fondo="atardecer"]::before{
+  background:linear-gradient(165deg, #FFD3A1 0%, #FFB0B8 50%, #CDB2F2 100%);
+  filter:none;
+}
+.cal[data-fondo="atardecer"]::after{ background:none; }
+
+/* Fondo "tomates": color liso con tomatitos dibujados y repetidos */
+.cal[data-fondo="tomates"]::before{
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg opacity='.5'%3E%3Ccircle cx='16' cy='18' r='7' fill='%23E8412C'/%3E%3Ccircle cx='13.5' cy='15.5' r='1.8' fill='%23FF9C8A'/%3E%3Cpath d='M16 11.5l1.6-2.6M16 11.5l-3-1.2M16 11.5l3-1.2M16 11.5l-1.8 2M16 11.5l1.8 2' stroke='%232E9E44' stroke-width='1.6' stroke-linecap='round'/%3E%3Ccircle cx='48' cy='50' r='7' fill='%23E8412C'/%3E%3Ccircle cx='45.5' cy='47.5' r='1.8' fill='%23FF9C8A'/%3E%3Cpath d='M48 43.5l1.6-2.6M48 43.5l-3-1.2M48 43.5l3-1.2M48 43.5l-1.8 2M48 43.5l1.8 2' stroke='%232E9E44' stroke-width='1.6' stroke-linecap='round'/%3E%3C/g%3E%3C/svg%3E") 0 0 / 64px 64px repeat,
+    #FFF3EE;
+  filter:none;
+}
+.cal[data-fondo="tomates"]::after{ background:none; }
+
 .cal-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.cal-top strong{font-size:20px}
+.cal-top strong{font-size:20px;color:#000}   /* "Noviembre 2026" en negro */
 .nav{width:44px;height:44px;border-radius:50%;border:1px solid var(--linea);background:transparent;cursor:pointer;font-size:20px}
 .nav:disabled{opacity:.3;cursor:default}
 .rejilla{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
-.rejilla .ds{font-size:13px;color:var(--granito);padding:4px 0}
+.rejilla .ds{font-size:13px;color:#1F51FF;font-weight:600;padding:4px 0}   /* letras L M X... en azul eléctrico */
 .d{
   aspect-ratio:1;border:0;border-radius:12px;background:transparent;cursor:pointer;
   position:relative;font-size:16px;min-height:40px;
+  color:#000;font-weight:600;   /* números en negro */
 }
 .d.finde{background:color-mix(in srgb,var(--alga) 14%,transparent)}
 .d.hoy{box-shadow:inset 0 0 0 2px var(--mar)}
-.d.sel{background:var(--mar);color:var(--bg);font-weight:600}
-.d:disabled{color:var(--linea);cursor:default;background:transparent}
+.d.sel{background:#000;color:#fff;font-weight:600}
+.d:disabled{color:#000;opacity:.35;cursor:default;background:transparent}   /* días pasados: el mismo negro, más apagado */
 .d.plan::after{
   content:"";position:absolute;left:50%;bottom:6px;width:6px;height:6px;margin-left:-3px;
-  border-radius:50%;background:var(--toxo);
+  border-radius:50%;background:#1F51FF;   /* punto de "tiene plan" en azul eléctrico, como las letras */
 }
 .panel{margin-top:18px}
 .panel h3{font-size:24px;margin:0 0 12px;font-weight:800;letter-spacing:-.02em}
@@ -117,10 +181,20 @@ h2{font-size:clamp(34px,9vw,48px);line-height:1;letter-spacing:-.03em;margin:40p
 .resumen li{margin:4px 0}
 .acciones{display:flex;gap:8px}
 .acciones .prim{flex:1}
+.acciones-cancelar{display:flex;gap:8px;margin-top:8px}
+.acciones-cancelar:not(:has(button:not([hidden]))){display:none}   /* si no hay botones visibles, no ocupa sitio */
+.acciones-cancelar .btn{flex:1}
+.btn.peque{min-height:40px;padding:8px 14px;font-size:15px}
+.confirmar{margin-top:10px;padding:12px;border-radius:14px;background:rgba(255,255,255,.12)}
+.confirmar p{margin:0 0 4px;font-size:15px}
+.resumen li{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.quitar{flex:none;border:0;border-radius:999px;padding:6px 12px;min-height:36px;cursor:pointer;
+  background:rgba(255,255,255,.18);color:inherit;font:inherit;font-size:14px}
 .btn{border:0;border-radius:999px;padding:12px 20px;min-height:44px;cursor:pointer;font-weight:600}
-.btn.prim{background:var(--toxo);color:#1B1A10}
+.btn.prim{background:var(--toxo);color:#fff}
 .btn.sec{background:transparent;color:inherit;box-shadow:inset 0 0 0 2px currentColor}
 .btn:disabled{opacity:.4;cursor:default}
+.volver{margin-top:24px;width:100%;color:var(--mar)}
 .aviso{font-size:14px;opacity:.8;margin:0}
 
 /* Puerta */
@@ -129,11 +203,74 @@ h2{font-size:clamp(34px,9vw,48px);line-height:1;letter-spacing:-.03em;margin:40p
 .puerta h1{font-size:40px;line-height:1;margin:0 0 10px;color:var(--mar);letter-spacing:-.03em}
 .puerta p{color:var(--granito);margin:0 0 18px}
 .puerta input{
-  width:100%;font:inherit;padding:12px 14px;border-radius:12px;border:2px solid var(--linea);
-  background:var(--papel);color:var(--texto);margin-bottom:10px;
+  width:100%;font:inherit;padding:12px 52px 12px 14px;border-radius:12px;border:2px solid var(--linea);
+  background:var(--papel);color:var(--texto);
 }
+/* Casilla de la palabra secreta con el ojo dentro, a la derecha */
+.campo{position:relative;margin-bottom:10px}
+.ollo{position:absolute;right:4px;top:50%;transform:translateY(-50%);width:44px;height:44px;
+  border:0;background:transparent;font-size:20px;cursor:pointer;border-radius:10px;opacity:.6}
+.ollo[aria-pressed="true"]{opacity:1}
 .puerta .error{color:#B3261E;min-height:1.5em;margin:0 0 8px;font-size:15px}
 [hidden]{display:none!important}
+
+/* ===== Fondos de la página (se eligen con PAGINA en los ajustes del JavaScript) ===== */
+body[data-pagina]{min-height:100vh;background-attachment:fixed}
+
+/* 1. Atardecer suave: melocotón → rosa → lila */
+body[data-pagina="atardecer"]{ --bg:#FFE3C9; background:linear-gradient(180deg,#FFE3C9 0%,#FFD0D8 55%,#E3D3FA 100%) fixed; }
+
+/* 2. Azul eléctrico suave: azul clarito → lila clarito */
+body[data-pagina="azul"]{ --bg:#E6EDFF; background:linear-gradient(180deg,#E3EBFF 0%,#EFE8FF 100%) fixed; }
+
+/* 3. Cielo de noche: azul marino → morado, con los textos en claro */
+body[data-pagina="noche"]{
+  --bg:#141B3C; --texto:#EEEAFB; --granito:#B8B3D9; --mar:#FFFFFF; --linea:#4A3F78; --papel:#241E4A;
+  background:linear-gradient(180deg,#141B3C 0%,#3A1F5C 100%) fixed;
+}
+body[data-pagina="noche"] .cal{ --papel:#FFFFFF; --linea:#CBD6D6; }   /* el calendario sigue claro */
+body[data-pagina="noche"] .resumen{ background:#0B1030; color:#EEEAFB; }
+
+/* 4, 5 y 6. Colores lisos */
+body[data-pagina="rosa"]{ --bg:#FBEFF1; background:#FBEFF1; }
+body[data-pagina="melocoton"]{ --bg:#FFF4EA; background:#FFF4EA; }
+body[data-pagina="lila"]{ --bg:#F3EEFF; background:#F3EEFF; }
+
+/* 7. Liso con textura sutil: lila con corazoncitos muy suaves */
+body[data-pagina="textura"]{
+  --bg:#F6F1FF;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cg fill='%23E58AB4' opacity='.22'%3E%3Cpath d='M12 18s-6-3.7-6-8a3.2 3.2 0 0 1 6-1.6A3.2 3.2 0 0 1 18 10c0 4.3-6 8-6 8z'/%3E%3Cpath d='M36 42s-6-3.7-6-8a3.2 3.2 0 0 1 6-1.6A3.2 3.2 0 0 1 42 34c0 4.3-6 8-6 8z'/%3E%3C/g%3E%3C/svg%3E") 0 0 / 48px 48px,
+    #F6F1FF;
+}
+
+/* 8. La foto de fondo de toda la página, muy desenfocada, y el calendario como un cristal */
+body[data-pagina="foto"]{ --bg:#E9E4F2; background:#E9E4F2; }
+body[data-pagina="foto"]::before{
+  content:"";position:fixed;inset:-40px;z-index:-1;
+  background:url("fondo-calendario.jpg") center / cover no-repeat;
+  filter:blur(28px) brightness(1.25) saturate(1.2);
+}
+body[data-pagina="foto"]::after{
+  content:"";position:fixed;inset:0;z-index:-1;background:rgba(255,255,255,.5);
+}
+body[data-pagina="foto"] .cal{ background:rgba(255,255,255,.45); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border-color:rgba(255,255,255,.6); }
+body[data-pagina="foto"] .cal::before, body[data-pagina="foto"] .cal::after{ display:none; }
+
+/* ===== Temas de color (se eligen con TEMA en los ajustes del JavaScript) =====
+   --mar      = título, barra de abajo y detalles
+   --granito  = texto pequeño (el de debajo del título, las horas...)
+   --boton / --boton-texto = el botón "Enviar resposta" (y "Entrar") */
+body[data-tema]{ --boton-texto:#fff; }
+body[data-tema] .btn.prim{ background:var(--boton); color:var(--boton-texto); }
+body[data-tema] .btn.prim:disabled{ opacity:.55; }
+body[data-tema] .resumen{ background:var(--mar); color:#fff; }
+
+body[data-tema="burdeos"]{ --mar:#7A1F3D; --granito:#9C6B7B; --boton:#F7A8BC; --boton-texto:#5A1229; }
+body[data-tema="azul"]   { --mar:#1A2B8F; --granito:#5A63A8; --boton:#1F51FF; --boton-texto:#fff; }
+body[data-tema="ciruela"]{ --mar:#4B1D5C; --granito:#85699A; --boton:#FF8FB1; --boton-texto:#3A1247; }
+body[data-tema="verde"]  { --mar:#1F4D3A; --granito:#5E7F6F; --boton:#FFB4C4; --boton-texto:#173C2D; }
+body[data-tema="negro"]  { --mar:#1A1A1A; --granito:#6B6B6B; --boton:#FF5C8A; --boton-texto:#fff; }
 </style>
 </head>
 <body>
@@ -141,38 +278,66 @@ h2{font-size:clamp(34px,9vw,48px);line-height:1;letter-spacing:-.03em;margin:40p
 <div class="puerta" id="puerta" hidden>
   <form id="form-puerta">
     <h1>Hola</h1>
-    <p>Esto es solo para ti. Escribe nuestra palabra secreta para entrar.</p>
+    <p>Isto é só para ti. Escribe a palabra secreta para entrar.</p>
     <label for="clave" class="sr" style="position:absolute;left:-9999px">Palabra secreta</label>
-    <input id="clave" type="password" autocomplete="off" placeholder="Palabra secreta">
+    <div class="campo">
+      <input id="clave" type="password" autocomplete="off" placeholder="🍅">
+      <!-- Ollo: amosa ou agocha o que escribiches -->
+      <button type="button" class="ollo" id="ollo" aria-label="Amosar a palabra" aria-pressed="false">👁️</button>
+    </div>
     <p class="error" id="error" role="alert"></p>
     <button class="btn prim" type="submit">Entrar</button>
   </form>
 </div>
 
+<!-- Pantalla final: tapa toda la página cuando la respuesta se ha enviado -->
+<div class="puerta" id="salida" hidden>
+  <div style="max-width:360px;width:100%;text-align:center">
+    <h1>Enviado! 💙</h1>
+    <p>Xa me chegou a túa resposta. Xa podes pechar a páxina.</p>
+  </div>
+</div>
+
 <main id="app">
   <section aria-labelledby="t-cal">
-    <h2 id="t-cal">Disponibilidad</h2>
-    <p class="sub">Toca un día para ver los planes.</p>
+    <h2 id="t-cal">Dispoñibilidade</h2>
+    <p class="sub">Toca un día para ver os plans.</p>
     <div class="cal">
       <div class="cal-top">
         <button class="nav" id="prev" aria-label="Mes anterior">‹</button>
         <strong id="mes" aria-live="polite"></strong>
-        <button class="nav" id="next" aria-label="Mes siguiente">›</button>
+        <button class="nav" id="next" aria-label="Mes seguinte">›</button>
       </div>
       <div class="rejilla" id="rejilla"></div>
+    </div>
+    <div class="semana">
+      <button class="chip semana-btn" id="semana" aria-pressed="false">Esta semana imposible 😢</button>
     </div>
     <div class="panel" id="panel"></div>
   </section>
 </main>
 
-<aside class="resumen" aria-label="Tus planes">
+<aside class="resumen" aria-label="Os teus plans">
   <div class="resumen-in">
     <details id="det">
-      <summary><span id="cuenta">Todavía no has elegido nada</span><span aria-hidden="true">▴</span></summary>
+      <summary><span id="cuenta">Aínda non escolliches nada</span><span aria-hidden="true">▴</span></summary>
       <ul id="lista"></ul>
     </details>
     <div class="acciones">
-      <button class="btn prim" id="enviar">Enviar respuesta</button>
+      <button class="btn prim" id="enviar">Enviar resposta</button>
+    </div>
+    <!-- Solo aparecen cuando hay algo elegido (lo decide pintarResumen) -->
+    <div class="acciones-cancelar">
+      <button class="btn sec peque" id="cancelar" hidden>Cancelar</button>
+      <button class="btn sec peque" id="cancelar-todo" hidden>Cancelar todo</button>
+    </div>
+    <!-- Pregunta de confirmación dentro de la página (en lugar de la ventanita del navegador) -->
+    <div class="confirmar" id="confirmar" hidden>
+      <p id="confirmar-texto"></p>
+      <div class="acciones-cancelar">
+        <button class="btn sec peque" id="confirmar-no">Non</button>
+        <button class="btn prim peque" id="confirmar-si">Si, quitar</button>
+      </div>
     </div>
     <p class="aviso" id="estado" role="status"></p>
   </div>
@@ -183,18 +348,90 @@ h2{font-size:clamp(34px,9vw,48px);line-height:1;letter-spacing:-.03em;margin:40p
    CLAVE: la palabra que tiene que escribir para entrar.
    Déjala vacía ("") para quitar la pantalla de entrada. */
 const CLAVE = "tomatiño";
+/* OTRAS_CLAVES: otras formas de escribirla que también valen (por ejemplo, sin la ñ en el teclado) */
+const OTRAS_CLAVES = ["tomatiho", "tomatinho"];
 
 /* CLAVE_ENVIO: la clave de Web3Forms (web3forms.com).
    Las respuestas llegan al correo con el que creaste esa clave. */
 const CLAVE_ENVIO = "4e3be7f5-36d5-445c-9673-c2d2b2697e13";
 
-const LUGARES = [ // de norte a sur por la costa
-  {n:"Praia dos Cristais", z:"Laxe", t:"Una playa hecha de cristalitos pulidos por el mar."},
-  {n:"Faro Vilán", z:"Camariñas", t:"Faro sobre los acantilados, con vistas al mar abierto."},
-  {n:"Virxe da Barca", z:"Muxía", t:"El santuario entre las rocas, donde rompen las olas."},
-  {n:"Cabo Fisterra", z:"Fisterra", t:"El “fin del mundo”: faro y puesta de sol."},
-  {n:"Fervenza do Ézaro", z:"Dumbría", t:"Una cascada que cae directamente al mar."}
+/* MARGEN_MINUTOS: cuánto tiempo después de la hora de la cita se puede seguir eligiendo.
+   120 = 2 horas: la mañana (10:00) se puede elegir hasta las 12:00 y la tarde (16:00) hasta las 18:00. */
+const MARGEN_MINUTOS = 120;
+
+/* FONDO: el fondo del calendario. Puede ser "foto", "atardecer" o "tomates".
+   (Para probar sin tocar el código, añade ?fondo=tomates al final del enlace.) */
+const FONDO = "foto";
+document.querySelector(".cal").dataset.fondo =
+  new URLSearchParams(location.search).get("fondo") || FONDO;
+
+/* PAGINA: el fondo de toda la página. Puede ser "normal", "atardecer", "azul", "noche",
+   "rosa", "melocoton", "lila", "textura" o "foto".
+   (Para probar sin tocar el código, añade ?pagina=noche al final del enlace.) */
+const PAGINA = "azul";
+const paginaElegida = new URLSearchParams(location.search).get("pagina") || PAGINA;
+if (paginaElegida !== "normal") document.body.dataset.pagina = paginaElegida;
+
+/* TEMA: los colores del título, la barra de abajo y el botón. Puede ser "normal",
+   "burdeos", "azul", "ciruela", "verde" o "negro".
+   (Para probar sin tocar el código, añade ?tema=burdeos al final del enlace.) */
+const TEMA = "azul";
+const temaElegido = new URLSearchParams(location.search).get("tema") || TEMA;
+if (temaElegido !== "normal") document.body.dataset.tema = temaElegido;
+
+/* Tarde do sábado e do domingo:
+   - ELIXO_EU: decido eu o plan.
+   - ELIXES_TI: escolle ela; ábrese a lista de sitios (LUGARES) e OUTRA, onde pode escribir o que queira. */
+const ELIXO_EU = "Elixo eu";
+const ELIXES_TI = "Elixes ti";
+const OUTRA = "Outra opción";
+/* STICKER_VENRES_TEXTO: o texto que sae co sticker o venres ao escoller "Quedar" */
+const STICKER_VENRES_TEXTO = "Só nos vai dar tempo de tomar algo antes do entreno";
+/* STICKER_MANA_TEXTO: o texto que sae co sticker ao escoller calquera plan pola mañá */
+const STICKER_MANA_TEXTO = "mood madrugadora jsjsj";
+/* STICKER_ELIXO_EU_TEXTO: o texto que sae co sticker ao escoller "Elixo eu" */
+const STICKER_ELIXO_EU_TEXTO = "Que pouca iniciativa eh 🤦🏻‍♀️";
+/* SIN_DATOS: plans da tarde que NON amosan o tempo nin o solpor */
+const SIN_DATOS = [ELIXO_EU, OUTRA];
+
+/* LUGARES: os sitios de "Elixes ti", en dúas categorías (cat):
+   - "coruna": preto da Coruña. O tempo e o solpor son SEMPRE os da Coruña (non levan lat/lng).
+   - "costa":  o tempo e o solpor son os de cada sitio (por iso levan lat/lng). */
+const CATEGORIAS = [
+  {id:"coruna", titulo:"A Coruña"},
+  {id:"costa",  titulo:"Costa"}
 ];
+const LUGARES = [
+  // --- A Coruña ---
+  {cat:"coruna", n:"Torre de Hércules", z:"A Coruña", t:"O faro romano que segue funcionando."},
+  {cat:"coruna", n:"MUNCYT", z:"A Coruña", t:"Museo Nacional de Ciencia e Tecnoloxía."},
+  {cat:"coruna", n:"Parque de Oza", z:"A Coruña", t:"Xardíns e camiños para pasear."},
+  {cat:"coruna", n:"Parque de Eirís", z:"A Coruña", t:"Parque grande e tranquilo para pasear."},
+  {cat:"coruna", n:"Fervenza do Parque de Bens", z:"A Coruña", t:"Unha fervenza no medio do parque."},
+  {cat:"coruna", n:"Parque do Monticaño", z:"Arteixo", t:"Antiga batería militar con vistas ao mar."},
+  {cat:"coruna", n:"O Mirón", z:"Arteixo", t:"Escultura-miradoiro para enmarcar o horizonte."},
+  // --- Costa (de norte a sur, e despois os de interior) ---
+  {cat:"costa", n:"Faro de Laxe", z:"Laxe", t:"Faro na punta, con vistas á praia e á ría.", lat:43.23, lng:-9.01},
+  {cat:"costa", n:"Praia dos Cristais", z:"Laxe", t:"Unha praia feita de cristaliños puídos polo mar.", lat:43.22, lng:-9.00},
+  {cat:"costa", n:"Faro Vilán", z:"Camariñas", t:"Faro sobre os cantís, con vistas ao mar aberto.", lat:43.16, lng:-9.21},
+  {cat:"costa", n:"Virxe da Barca", z:"Muxía", t:"O santuario entre as rochas, onde rompen as ondas.", lat:43.11, lng:-9.22},
+  {cat:"costa", n:"Cabo Fisterra", z:"Fisterra", t:"O “fin do mundo”: faro e solpor.", lat:42.88, lng:-9.27},
+  {cat:"costa", n:"Fervenza do Ézaro", z:"Dumbría", t:"Unha fervenza que cae directamente ao mar.", lat:42.91, lng:-9.12},
+  {cat:"costa", n:"Refuxio de Verdes", z:"Coristanco", t:"Muíños, pontes de madeira e o río Anllóns.", lat:43.21, lng:-8.74},
+  {cat:"costa", n:"Miradoiro do Picoto", t:"Miradoiro con vistas ao val.", lat:43.05, lng:-8.68}
+];
+// Lembra que desplegables abriu ou pechou ela (para que non se pechen sós ao redebuxar a páxina)
+const desplegablesAbertos = {};
+document.addEventListener("toggle", e=>{
+  const d = e.target; if (!d.dataset || !d.dataset.cat) return;
+  desplegablesAbertos[d.dataset.cat] = d.open;
+}, true);
+
+/* SITIO_NORMAL: dónde se calcula el atardecer cuando el plan de la tarde no es
+   uno de los sitios de arriba (por ejemplo "Ir tomar algo"). */
+const SITIO_NORMAL = {z:"A Coruña", lat:43.36, lng:-8.41};
+/* SITIO_VENRES: para todo o que non sexa un sitio da costa (calquera día), o tempo e o solpor son os de Santa Comba */
+const SITIO_VENRES = {z:"Santa Comba", lat:43.03, lng:-8.81};
 
 /* ===== Utilidades ===== */
 const $ = s => document.querySelector(s);
@@ -204,8 +441,11 @@ const deClave = k => { const [y,m,d]=k.split("-").map(Number); return new Date(y
 const hoy = (()=>{const d=new Date();d.setHours(0,0,0,0);return d;})();
 const masDias = (d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x;};
 const cap = s => s.charAt(0).toUpperCase()+s.slice(1);
-const fechaLarga = d => cap(d.toLocaleDateString("es-ES",{weekday:"long",day:"numeric",month:"long"}).replace(",",""));
-const nombreDia = d => cap(d.toLocaleDateString("es-ES",{weekday:"long"}));
+/* Nomes dos días e dos meses en galego (escritos a man: moitos navegadores non os traen) */
+const DIAS = ["domingo","luns","martes","mércores","xoves","venres","sábado"];
+const MESES = ["xaneiro","febreiro","marzo","abril","maio","xuño","xullo","agosto","setembro","outubro","novembro","decembro"];
+const fechaLarga = d => cap(`${DIAS[d.getDay()]} ${d.getDate()} de ${MESES[d.getMonth()]}`);   // "Sábado 28 de novembro"
+const nombreDia = d => cap(DIAS[d.getDay()]);
 
 function leer(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}}
 function guardar(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
@@ -213,42 +453,193 @@ function guardar(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
 let planes = leer("citas-v1") || {};   // { "2026-11-28": {manana:"...", tarde:"...", otro:true} }
 // Borra planes de días ya pasados
 for (const k in planes) if (deClave(k) < hoy) delete planes[k];
+// (más abajo, al arrancar, también se borran las franjas de hoy que ya pasaron)
 
 /* ===== Qué se puede hacer cada día ===== */
 function franjas(d){
   const w = d.getDay();
-  if (w===5) return [{s:"tarde",t:"Por la tarde",h:"16:00",ops:["Ir a tomar algo"]}];
+  if (w===5) return [{s:"tarde",t:"Pola tarde",h:"16:00",ops:["Quedar"]}];   // venres
   if (w===6 || w===0) return [
-    {s:"manana",t:"Por la mañana",h:"10:00",ops:["Ir a tomar algo"]},
-    {s:"tarde",t:"Por la tarde",h:"16:00",lugares:true}
+    {s:"manana",t:"Pola mañá",h:"10:00",ops:["Quedar"]},
+    {s:"tarde",t:"Pola tarde",h:"16:00",lugares:true}
   ];
   return [
-    {s:"manana",t:"Por la mañana",h:"10:00",ops:["Quedar"]},
-    {s:"tarde",t:"Por la tarde",h:"16:00",ops:["Quedar"]}
+    {s:"manana",t:"Pola mañá",h:"10:00",ops:["Quedar"]},
+    {s:"tarde",t:"Pola tarde",h:"16:00",ops:["Quedar"]}
   ];
 }
 
 function esc(s){return s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
 
+/* ===== ¿Ya ha pasado la hora? =====
+   yaPaso: true si el día d a la hora "HH:MM" ya es pasado (o es justo ahora).
+   diaTerminado: true si ya han pasado todas las franjas de ese día. */
+function yaPaso(d, hora){
+  const [hh, mm] = hora.split(":").map(Number);
+  const t = new Date(d); t.setHours(hh, mm + MARGEN_MINUTOS, 0, 0);
+  return t <= new Date();
+}
+function diaTerminado(d){
+  return d < hoy || franjas(d).every(f => yaPaso(d, f.h));
+}
+
+/* enEstaSemana: true si el día d es de esta semana (de lunes a domingo, la de hoy) */
+function enEstaSemana(d){
+  const lunes = masDias(hoy, -((hoy.getDay() + 6) % 7));
+  return d >= lunes && d <= masDias(lunes, 6);
+}
+/* bloqueadoPorSemana: si ha marcado "Esta semana imposible", los días de esta semana no se pueden elegir */
+function bloqueadoPorSemana(d){ return semanaImposible && enEstaSemana(d); }
+
+/* ===== Hora del atardecer =====
+   La pide a sunrise-sunset.org (gratis) para ese día y ese sitio.
+   Mientras no llega, o si falla, no se muestra nada. */
+const atardeceres = {};   // "2026-11-28|42.88,-9.27" -> "18:05"  (o false si falló)
+function sitioDe(plan, k){
+  const lugar = LUGARES.find(l => l.n === plan);
+  if (lugar && lugar.cat === "coruna") return SITIO_NORMAL;      // sitios da Coruña: sempre o tempo da Coruña
+  if (lugar && lugar.lat != null) return lugar;                // sitios da costa: o tempo de cada sitio
+  return SITIO_VENRES;                                         // todo o demais (calquera día): Santa Comba
+}
+function atardecer(k, sitio){
+  const id = `${k}|${sitio.lat},${sitio.lng}`;
+  if (id in atardeceres) return atardeceres[id] || null;
+  atardeceres[id] = false;   // marcado como "pidiéndolo", para no pedirlo dos veces
+  fetch(`https://api.sunrise-sunset.org/json?lat=${sitio.lat}&lng=${sitio.lng}&date=${k}&formatted=0`)
+    .then(r => r.json())
+    .then(j => {
+      if (j.status !== "OK") return;
+      atardeceres[id] = new Date(j.results.sunset)
+        .toLocaleTimeString("es-ES", {hour:"2-digit", minute:"2-digit", timeZone:"Europe/Madrid"});
+      pintarTodo();   // vuelve a dibujar para que aparezca
+    })
+    .catch(() => {});   // sin conexión: no se pone nada
+  return null;
+}
+
+/* ===== El tiempo a la hora del plan =====
+   Lo pide a open-meteo.com (gratis, sin clave) para ese día, ese sitio y esa hora.
+   Solo hay previsión para unos 15 días: si el día está más lejos, o si falla, no se muestra nada. */
+const tiempos = {};   // "2026-11-28|42.88,-9.27|16:00" -> {icono, texto, temp, lluvia, viento}  (o false)
+const CODIGOS_TIEMPO = {   // códigos del tiempo (estándar WMO) -> dibujo y texto
+  0:["☀️","Despexado"], 1:["🌤️","Case despexado"], 2:["⛅","Algo anubrado"], 3:["☁️","Anubrado"],
+  45:["🌫️","Néboa"], 48:["🌫️","Néboa"],
+  51:["🌦️","Orballo"], 53:["🌦️","Orballo"], 55:["🌦️","Orballo"], 56:["🌧️","Orballo xeado"], 57:["🌧️","Orballo xeado"],
+  61:["🌦️","Choiva feble"], 63:["🌧️","Choiva"], 65:["🌧️","Choiva forte"], 66:["🌧️","Choiva xeada"], 67:["🌧️","Choiva xeada"],
+  71:["🌨️","Neve"], 73:["🌨️","Neve"], 75:["🌨️","Neve"], 77:["🌨️","Neve"],
+  80:["🌦️","Chuvascos"], 81:["🌧️","Chuvascos"], 82:["⛈️","Chuvascos fortes"], 85:["🌨️","Chuvascos de neve"], 86:["🌨️","Chuvascos de neve"],
+  95:["⛈️","Treboada"], 96:["⛈️","Treboada con sarabia"], 99:["⛈️","Treboada con sarabia"]
+};
+function tiempo(k, sitio, hora){
+  const id = `${k}|${sitio.lat},${sitio.lng}|${hora}`;
+  if (id in tiempos) return tiempos[id] || null;
+  tiempos[id] = false;   // "pidiéndolo"
+  if (deClave(k) > masDias(hoy, 15)) return null;   // aún no hay previsión para ese día: ni lo pedimos
+  fetch(`https://api.open-meteo.com/v1/forecast?latitude=${sitio.lat}&longitude=${sitio.lng}` +
+        `&hourly=temperature_2m,precipitation_probability,weather_code,wind_speed_10m` +
+        `&timezone=Europe%2FMadrid&start_date=${k}&end_date=${k}`)
+    .then(r => r.json())
+    .then(j => {
+      const i = j.hourly ? j.hourly.time.indexOf(`${k}T${hora}`) : -1;
+      if (i < 0) return;   // día sin previsión todavía
+      const [icono, texto] = CODIGOS_TIEMPO[j.hourly.weather_code[i]] || ["🌡️", "Tempo"];
+      tiempos[id] = {
+        icono, texto,
+        temp: Math.round(j.hourly.temperature_2m[i]),
+        lluvia: j.hourly.precipitation_probability[i],
+        viento: Math.round(j.hourly.wind_speed_10m[i])
+      };
+      pintarTodo();
+    })
+    .catch(() => {});
+  return null;
+}
+function cajaTiempo(t, sitio){
+  if (!t) return "";
+  return `<p class="clima">${t.icono} ${t.texto}, <strong>${t.temp} °C</strong> en ${sitio.z || sitio.n}` +
+         `<small>Choiva ${t.lluvia ?? 0} % · vento ${t.viento} km/h</small></p>`;
+}
+
 function planesDelDia(d){
-  const k = clave(d), p = planes[k] || {}, pasado = d < hoy;
-  const dis = pasado ? " disabled" : "";
+  const k = clave(d), p = planes[k] || {};
+  const disDia = diaTerminado(d) ? " disabled" : "";   // todo el día
   let h = "";
   for (const f of franjas(d)){
-    h += `<div class="franja"><p class="franja-t">${f.t}<span class="hora">${f.h}</span></p>`;
+    const pasada = yaPaso(d, f.h);
+    const dis = pasada ? " disabled" : "";   // solo esta franja
+    h += `<div class="franja${pasada?" pasada":""}"><p class="franja-t">${f.t}<span class="hora">${f.h}${pasada?" · xa pasou":""}</span></p>`;
+
+    // Recuadros del tiempo y del atardecer: van justo debajo de la opción elegida (cuando ya tenemos los datos)
+    let cajaAtardecer = "";
+    // "Elixo eu" e "Outra opción" non teñen sitio fixo: sen tempo nin solpor
+    const sinDatos = d.getDay() === 5 || (f.s === "tarde" && SIN_DATOS.includes(p.tarde));   // o venres tampouco
+    if (p[f.s] && !sinDatos){
+      const sitio = sitioDe(f.s === "tarde" ? p.tarde : null, k);
+      cajaAtardecer += cajaTiempo(tiempo(k, sitio, f.h), sitio);
+    }
+    if (f.s === "tarde" && p.tarde && !sinDatos){
+      const sitio = sitioDe(p.tarde, k), a = atardecer(k, sitio);
+      // Si es un sitio de la costa pone "en Fisterra"...; si no (p. ej. el venres, "Quedar"), solo la hora
+      // "en Fisterra" nos sitios da costa, "en A Coruña" nos sitios da Coruña; nada no resto
+      const enCoruna = sitio === SITIO_NORMAL && LUGARES.some(l => l.n === p.tarde);
+      const donde = (LUGARES.includes(sitio) || enCoruna) ? ` en ${sitio.z || sitio.n}` : "";
+      if (a) cajaAtardecer += `<p class="atardecer">🌅 Solpor <strong>${a}</strong>${donde}</p>`;
+    }
+
     if (f.lugares){
-      h += `<ol class="costa">` + LUGARES.map(l =>
-        `<li><button class="lugar" data-k="${k}" data-s="tarde" data-v="${esc(l.n)}" aria-pressed="${p.tarde===l.n}"${dis}>
-          <span class="punto" aria-hidden="true"></span>
-          <span><strong>${l.n}</strong><small>${l.z}. ${l.t}</small></span></button></li>`).join("") + `</ol>
-        <p class="costa-nota">Ordenados de norte a sur por la costa.</p>`;
+      // 1º) Dous botóns: "Elixo eu" (decido eu) e "Elixes ti" (escolle ela)
+      h += `<div class="chips">
+        <button class="chip" data-k="${k}" data-s="tarde" data-v="${esc(ELIXO_EU)}" aria-pressed="${p.tarde===ELIXO_EU}"${dis}>${ELIXO_EU}</button>
+        <button class="chip" data-k="${k}" data-s="ti" data-v="1" aria-pressed="${!!p.ti}"${dis}>${ELIXES_TI}</button>
+      </div>`;
+      if (p.tarde === ELIXO_EU){
+        // Ao escoller "Elixo eu": sticker + mensaxe
+        h += `<div class="sticker"><img src="sticker-elixo-eu.png" alt="">
+                <p>${STICKER_ELIXO_EU_TEXTO}</p></div>`;
+        h += cajaAtardecer;
+      }
+
+      // 2º) Se escolle "Elixes ti": a lista de sitios + "Outra opción" para escribir
+      if (p.ti){
+        // Un desplegable por categoría ("A Coruña" e "Costa"). Ábrese só se o abriu ela ou se ten dentro o sitio escollido.
+        for (const c of CATEGORIAS){
+          const dela = LUGARES.filter(l => l.cat === c.id);
+          const escollido = dela.find(l => l.n === p.tarde);
+          const aberto = desplegablesAbertos[`${k}|${c.id}`] ?? !!escollido;
+          h += `<details class="categoria" data-cat="${k}|${c.id}"${aberto ? " open" : ""}>
+            <summary><span>${c.titulo}</span>${escollido ? `<small>${escollido.n}</small>` : ""}</summary>
+            <ol class="costa">` + dela.map(l =>
+            `<li><button class="lugar" data-k="${k}" data-s="tarde" data-v="${esc(l.n)}" aria-pressed="${p.tarde===l.n}"${dis}>
+              <span class="punto" aria-hidden="true"></span>
+              <span><strong>${l.n}</strong>${(l.z || l.t) ? `<small>${[l.z, l.t].filter(Boolean).join(". ")}</small>` : ""}</span></button>
+              ${p.tarde===l.n ? cajaAtardecer : ""}</li>`).join("") + `</ol></details>`;
+        }
+        // "Outra opción", fóra dos desplegables
+        h += `<ol class="costa">` +
+          `<li><button class="lugar" data-k="${k}" data-s="tarde" data-v="${esc(OUTRA)}" aria-pressed="${p.tarde===OUTRA}"${dis}>
+            <span class="punto" aria-hidden="true"></span>
+            <span><strong>${OUTRA}</strong><small>Escribe ti o plan</small></span></button>
+            ${p.tarde===OUTRA ? `<input class="outra" data-outra="${k}" type="text" maxlength="120" placeholder="Que che apetece facer?" value="${esc(p.outra || "")}">` + cajaAtardecer : ""}</li>` +
+          `</ol><p class="costa-nota"></p>`;
+      }
     } else {
       h += `<div class="chips">` + f.ops.map(o =>
         `<button class="chip" data-k="${k}" data-s="${f.s}" data-v="${esc(o)}" aria-pressed="${p[f.s]===o}"${dis}>${o}</button>`).join("") + `</div>`;
+      // O venres, ao escoller "Quedar": sticker + mensaxe
+      if (d.getDay() === 5 && f.s === "tarde" && p.tarde === "Quedar"){
+        h += `<div class="sticker"><img class="fondo-branco" src="sticker-venres.png" alt="">
+                <p>${STICKER_VENRES_TEXTO}</p></div>`;
+      }
+      // Calquera día, ao escoller algo pola mañá: sticker de madrugadora + mensaxe
+      if (f.s === "manana" && p.manana){
+        h += `<div class="sticker"><img src="sticker-manana.png" alt="">
+                <p>${STICKER_MANA_TEXTO}</p></div>`;
+      }
+      h += cajaAtardecer;   // aquí la opción es un botón suelto: el recuadro va justo debajo
     }
     h += `</div>`;
   }
-  h += `<div class="chips"><button class="chip otro" data-k="${k}" data-s="otro" data-v="1" aria-pressed="${!!p.otro}"${dis}>Mejor otro día</button></div>`;
+  // (aquí estaba el botón "Mellor outro día": quitado)
   return h;
 }
 
@@ -257,9 +648,9 @@ let vista = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
 let elegido = null;
 
 function pintarCal(){
-  $("#mes").textContent = cap(vista.toLocaleDateString("es-ES",{month:"long"})) + " " + vista.getFullYear();
+  $("#mes").textContent = cap(MESES[vista.getMonth()]) + " " + vista.getFullYear();
   $("#prev").disabled = vista <= new Date(hoy.getFullYear(),hoy.getMonth(),1);
-  let h = ["L","M","X","J","V","S","D"].map(x=>`<span class="ds" aria-hidden="true">${x}</span>`).join("");
+  let h = ["L","M","M","X","V","S","D"].map(x=>`<span class="ds" aria-hidden="true">${x}</span>`).join("");
   const hueco = (vista.getDay()+6)%7;
   for (let i=0;i<hueco;i++) h += `<span></span>`;
   const n = new Date(vista.getFullYear(),vista.getMonth()+1,0).getDate();
@@ -268,36 +659,99 @@ function pintarCal(){
     const cls = ["d"];
     if (w===5||w===6||w===0) cls.push("finde");
     if (+d===+hoy) cls.push("hoy");
-    if (planes[k]) cls.push("plan");
+    // ten plan de verdade (só abrir "Elixes ti" sen escoller nada aínda non conta)
+    const tienePlan = planes[k] && Object.keys(planes[k]).some(x => x !== "ti");
+    if (tienePlan) cls.push("plan");
     if (elegido===k) cls.push("sel");
-    h += `<button class="${cls.join(" ")}" data-dia="${k}" aria-label="${fechaLarga(d)}${planes[k]?", con plan":""}"${d<hoy?" disabled":""}>${i}</button>`;
+    h += `<button class="${cls.join(" ")}" data-dia="${k}" aria-label="${fechaLarga(d)}${tienePlan?", con plan":""}"${(diaTerminado(d) || bloqueadoPorSemana(d))?" disabled":""}>${i}</button>`;
   }
   $("#rejilla").innerHTML = h;
-  $("#panel").innerHTML = elegido ? `<h3>${fechaLarga(deClave(elegido))}</h3>${planesDelDia(deClave(elegido))}` : "";
+  // Se estaba escribindo en "Outra opción", lembramos onde estaba o cursor para non perdelo ao redebuxar
+  const escribindo = document.activeElement && document.activeElement.dataset ? document.activeElement.dataset.outra : null;
+  const cursor = escribindo ? document.activeElement.selectionStart : 0;
+  $("#panel").innerHTML = elegido
+    ? `<h3>${fechaLarga(deClave(elegido))}</h3>${planesDelDia(deClave(elegido))}
+       <button class="btn sec volver" id="volver">← Volver ao calendario</button>`
+    : "";
+  if (escribindo){
+    const caixa = document.querySelector(`[data-outra="${escribindo}"]`);
+    if (caixa){ caixa.focus({preventScroll:true}); caixa.setSelectionRange(cursor, cursor); }
+  }
+  // "Esta semana imposible" solo se ve si no hay ningún día abierto ni ningún plan elegido
+  // (o si ya está marcado, para poder desmarcarlo)
+  $(".semana").hidden = !(semanaImposible || (!elegido && Object.keys(planes).length === 0));
 }
 
 /* ===== Resumen y envío ===== */
-function lineas(){
+/* elegidos(): la lista de planes elegidos, cada uno con su día (k), su franja (s) y el texto */
+/* "Esta semana imposible": se guarda aparte de los planes de cada día */
+let semanaImposible = leer("citas-semana") === true;
+
+function elegidos(){
   const out = [];
+  if (semanaImposible) out.push({k:"semana", s:"semana", texto:"Esta semana imposible 😢"});
   Object.keys(planes).sort().forEach(k=>{
     const p = planes[k], f = fechaLarga(deClave(k));
-    if (p.otro){ out.push(`${f}: mejor otro día`); return; }
-    if (p.manana) out.push(`${f}, 10:00: ${p.manana.toLowerCase()}`);
+    if (p.otro){ out.push({k, s:"otro", texto:`${f}: mellor outro día`}); return; }
+    // El tiempo previsto, si ya lo tenemos, se añade al texto (y así llega también en el correo)
+    const conTiempo = t => t ? ` (${t.texto.toLowerCase()}, ${t.temp} °C)` : "";
+    if (p.manana) out.push({k, s:"manana", texto:`${f}, 10:00: ${p.manana.toLowerCase()}${conTiempo(tiempo(k, sitioDe(null, k), "10:00"))}`});
     if (p.tarde){
-      const esLugar = LUGARES.some(l=>l.n===p.tarde);
-      out.push(`${f}, 16:00: ${esLugar ? "ir a "+p.tarde : p.tarde.toLowerCase()}`);
+      const esLugar = LUGARES.some(l=>l.n===p.tarde);   // "ir a ..." para os sitios da lista
+      const sinDatos = deClave(k).getDay() === 5 || SIN_DATOS.includes(p.tarde);   // venres, "Elixo eu" e "Outra opción": sen tempo nin solpor
+      const a = sinDatos ? null : atardecer(k, sitioDe(p.tarde, k));
+      const t = sinDatos ? null : tiempo(k, sitioDe(p.tarde, k), "16:00");
+      let que;
+      if (p.tarde === OUTRA){
+        // o que escribiu ela en "Outra opción" (así che chega no correo)
+        const txt = (p.outra || "").trim();
+        que = txt ? `outra opción: "${txt}"` : "outra opción (aínda sen escribir)";
+      }
+      else if (esLugar) que = "ir a " + p.tarde;
+      else que = p.tarde.toLowerCase();
+      out.push({k, s:"tarde", texto:`${f}, 16:00: ${que}${conTiempo(t)}${a ? ` (solpor ás ${a})` : ""}`});
     }
   });
   return out;
 }
-function mensaje(){ return "Mis planes para quedar:\n\n" + lineas().map(l=>"• "+l).join("\n"); }
+function lineas(){ return elegidos().map(e => e.texto); }
+function mensaje(){ return "Os meus plans para quedar:\n\n" + lineas().map(l=>"• "+l).join("\n"); }
+
+/* Quita un solo plan (un día y una franja) */
+function quitar(k, s){
+  if (s === "semana"){ semanaImposible = false; guardar("citas-semana", false); pintarTodo(); return; }
+  const p = planes[k]; if (!p) return;
+  if (s === "otro") delete planes[k];
+  else { delete p[s]; if (s === "tarde"){ delete p.ti; delete p.outra; } }   // ao cancelar a tarde, pecha tamén "Elixes ti"
+  if (planes[k] && !Object.keys(planes[k]).length) delete planes[k];
+  guardar("citas-v1", planes);
+  pintarTodo();
+}
+
+let modoQuitar = false;   // true = la lista enseña un botón "Quitar" en cada plan
 
 function pintarResumen(){
-  const ls = lineas();
-  $("#cuenta").textContent = ls.length ? (ls.length===1 ? "1 plan elegido" : `${ls.length} planes elegidos`) : "Todavía no has elegido nada";
-  $("#lista").innerHTML = ls.length ? ls.map(l=>`<li>${esc(l)}</li>`).join("") : `<li style="list-style:none;margin-left:-20px">Toca un plan para añadirlo aquí.</li>`;
-  $("#enviar").disabled = !ls.length;
+  const es = elegidos();
+  if (es.length < 2) modoQuitar = false;
+  $("#cuenta").textContent = es.length ? (es.length===1 ? "1 plan escollido" : `${es.length} plans escollidos`) : "Aínda non escolliches nada";
+  $("#lista").innerHTML = es.length
+    ? es.map(e => `<li><span>${esc(e.texto)}</span>${modoQuitar ? `<button class="quitar" data-qk="${e.k}" data-qs="${e.s}">✕ Quitar</button>` : ""}</li>`).join("")
+    : `<li style="list-style:none;margin-left:-20px">Toca un plan para engadilo aquí.</li>`;
+  $("#enviar").disabled = !es.length;
+  // Botones de cancelar: ninguno si no hay nada, "Cancelar" si hay 1, "Cancelar" + "Cancelar todo" si hay 2 o más
+  $("#cancelar").hidden = es.length === 0;
+  $("#cancelar-todo").hidden = es.length < 2;
+  $("#cancelar").textContent = modoQuitar ? "Feito" : "Cancelar";
+  $("#semana").setAttribute("aria-pressed", semanaImposible);   // se ve azul cuando está elegido
 }
+
+// Botón "Esta semana imposible 😢": lo marca o lo desmarca
+$("#semana").onclick = ()=>{
+  semanaImposible = !semanaImposible;
+  guardar("citas-semana", semanaImposible);
+  $("#estado").textContent = "";
+  pintarTodo();
+};
 
 function pintarTodo(){ pintarCal(); pintarResumen(); }
 
@@ -306,31 +760,122 @@ document.addEventListener("click", e=>{
   const b = e.target.closest("[data-k]");
   if (b){
     const k=b.dataset.k, s=b.dataset.s, v=b.dataset.v;
+    if (bloqueadoPorSemana(deClave(k))) return;   // con "Esta semana imposible" no se eligen planes de esta semana
     const p = planes[k] || {};
     if (s==="otro"){ planes[k] = p.otro ? {} : {otro:true}; }
-    else { delete p.otro; if (p[s]===v) delete p[s]; else p[s]=v; planes[k]=p; }
+    else if (s==="ti"){
+      // "Elixes ti": abre ou pecha a lista de sitios
+      if (p.ti){ delete p.ti; if (p.tarde !== ELIXO_EU) delete p.tarde; delete p.outra; }
+      else { p.ti = true; if (p.tarde === ELIXO_EU) delete p.tarde; }
+      planes[k] = p;
+    }
+    else {
+      delete p.otro; if (p[s]===v) delete p[s]; else p[s]=v;
+      if (s==="tarde"){
+        if (v === ELIXO_EU) delete p.ti;              // "Elixo eu" pecha a lista de "Elixes ti"
+        if (p.tarde !== OUTRA) delete p.outra;        // se deixa "Outra opción", bórrase o texto
+      }
+      planes[k]=p;
+    }
     if (!Object.keys(planes[k]).length) delete planes[k];
     guardar("citas-v1", planes);
+    $("#estado").textContent = "";   // borra avisos viejos ("Plan cancelado", etc.)
     pintarTodo();
     const sel = `#panel [data-k="${k}"][data-s="${s}"][data-v="${CSS.escape(v)}"]`;
     const nb = document.querySelector(sel); if (nb) nb.focus({preventScroll:true});
+    // Se acaba de escoller "Outra opción", o cursor vai directo á caixa para escribir
+    if (s==="tarde" && v===OUTRA && planes[k] && planes[k].tarde===OUTRA){
+      const caixa = document.querySelector(`[data-outra="${k}"]`); if (caixa) caixa.focus({preventScroll:true});
+    }
+    return;
+  }
+  // Botón "Volver al calendario": cierra los planes del día, desmarca el día y sube al calendario
+  // (lo que eligió ese día se mantiene, solo se quita la marca del recuadro)
+  if (e.target.closest("#volver")){
+    elegido = null; pintarCal();
+    if (document.activeElement) document.activeElement.blur();   // quita también el borde de "seleccionado"
+    $(".cal").scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto":"smooth", block:"start"});
     return;
   }
   const dd = e.target.closest("[data-dia]");
   if (dd){
+    // Si pulsa otra vez el día que ya estaba abierto: lo cierra y deja el calendario como estaba
+    // (lo que hubiera elegido ese día se mantiene)
+    if (elegido === dd.dataset.dia){
+      elegido = null; pintarCal();
+      if (document.activeElement) document.activeElement.blur();
+      return;
+    }
     elegido = dd.dataset.dia; pintarCal();
     const f = document.querySelector(`[data-dia="${elegido}"]`); if (f) f.focus({preventScroll:true});
     $("#panel").scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto":"smooth", block:"nearest"});
   }
 });
+// Caixa de "Outra opción": garda o que escribe mentres escribe (e actualiza o resumo de abaixo)
+document.addEventListener("input", e=>{
+  const caixa = e.target.closest("[data-outra]"); if (!caixa) return;
+  const k = caixa.dataset.outra; if (!planes[k]) return;
+  planes[k].outra = caixa.value;
+  guardar("citas-v1", planes);
+  pintarResumen();
+});
+
 $("#prev").onclick = ()=>{ vista = new Date(vista.getFullYear(),vista.getMonth()-1,1); pintarCal(); };
 $("#next").onclick = ()=>{ vista = new Date(vista.getFullYear(),vista.getMonth()+1,1); pintarCal(); };
 
-/* ===== Enviar respuesta =====
+/* ===== Pregunta "¿Seguro?" dentro de la página =====
+   (la ventanita confirm() del navegador la bloquean algunos móviles y navegadores) */
+let alAceptar = null;
+function preguntar(texto, textoSi, accion){
+  $("#confirmar-texto").textContent = texto;
+  $("#confirmar-si").textContent = textoSi;
+  alAceptar = accion;
+  $("#confirmar").hidden = false;
+  $("#confirmar-si").focus();
+}
+function cerrarPregunta(){ $("#confirmar").hidden = true; alAceptar = null; }
+$("#confirmar-no").onclick = cerrarPregunta;
+$("#confirmar-si").onclick = ()=>{ const a = alAceptar; cerrarPregunta(); if (a) a(); };
+
+/* ===== Cancelar =====
+   - Si hay 1 plan: lo quita directamente, sin preguntar.
+   - Si hay 2 o más: abre la lista con un botón "Quitar" en cada plan (y el botón pasa a "Listo"). */
+$("#cancelar").onclick = ()=>{
+  const es = elegidos();
+  if (es.length === 1){
+    quitar(es[0].k, es[0].s);
+    $("#estado").textContent = "Plan cancelado.";
+    return;
+  }
+  modoQuitar = !modoQuitar;
+  $("#det").open = modoQuitar;
+  pintarResumen();
+};
+// Botón "Quitar" de cada plan de la lista
+$("#lista").addEventListener("click", e=>{
+  const b = e.target.closest(".quitar"); if (!b) return;
+  quitar(b.dataset.qk, b.dataset.qs);
+  $("#estado").textContent = "Plan cancelado.";
+});
+
+/* ===== Cancelar todo =====
+   Borra todos los planes elegidos (pregunta antes, por si se pulsa sin querer). */
+$("#cancelar-todo").onclick = ()=>{
+  preguntar("Seguro que queres borrar todo o que escolliches?", "Si, borrar todo", ()=>{
+    planes = {}; elegido = null; modoQuitar = false; semanaImposible = false;
+    guardar("citas-v1", planes); guardar("citas-semana", false);
+    pintarTodo();
+    $("#det").open = false;
+    $("#enviar").textContent = "Enviar resposta";
+    $("#estado").textContent = "Borraches todo. Podes volver escoller cando queiras.";
+  });
+};
+
+/* ===== Enviar resposta =====
    Manda el resumen a Web3Forms, que lo reenvía a tu correo. */
 $("#enviar").onclick = async ()=>{
   const b = $("#enviar"), estado = $("#estado");
-  if (!CLAVE_ENVIO){ estado.textContent = "Falta poner la clave de envío en el código (CLAVE_ENVIO)."; return; }
+  if (!CLAVE_ENVIO){ estado.textContent = "Falta poñer a clave de envío no código (CLAVE_ENVIO)."; return; }
   b.disabled = true; b.textContent = "Enviando…"; estado.textContent = "";
   try {
     const r = await fetch("https://api.web3forms.com/submit", {
@@ -338,18 +883,24 @@ $("#enviar").onclick = async ()=>{
       headers: {"Content-Type":"application/json", "Accept":"application/json"},
       body: JSON.stringify({
         access_key: CLAVE_ENVIO,
-        subject: "Respuesta: planes para quedar",
-        from_name: "Página de citas",
+        subject: "Resposta: plans para quedar",
+        from_name: "Páxina de citas",
         message: mensaje()
       })
     });
     const res = await r.json();
     if (!res.success) throw new Error(res.message);
-    b.textContent = "Respuesta enviada";
-    estado.textContent = "¡Listo! Ya le ha llegado.";
+    b.textContent = "Resposta enviada";
+    estado.textContent = "Feito! Xa lle chegou.";
+    // Sale de la página: enseña la pantalla final e intenta cerrar la pestaña
+    // (los navegadores solo dejan cerrarla sola si la abrió otra página; si no, se queda la pantalla final)
+    setTimeout(()=>{
+      $("#salida").hidden = false;
+      try { window.close(); } catch(e){}
+    }, 600);
   } catch(e){
-    b.textContent = "Enviar respuesta"; b.disabled = false;
-    estado.textContent = "No se ha podido enviar. Revisa la conexión a internet y vuelve a pulsar.";
+    b.textContent = "Enviar resposta"; b.disabled = false;
+    estado.textContent = "Non se puido enviar. Revisa a conexión a internet e volve premer.";
   }
 };
 
@@ -358,21 +909,52 @@ function abrir(){ $("#puerta").hidden = true; }
 if (CLAVE){
   let ok=false; try{ ok = sessionStorage.getItem("citas-ok")==="1"; }catch(e){}
   if (!ok){ $("#puerta").hidden = false; setTimeout(()=>$("#clave").focus(),50); }
+  // Botón del ojo: cambia la casilla entre "puntitos" (password) y texto normal
+  $("#ollo").onclick = ()=>{
+    const ver = $("#clave").type === "password";
+    $("#clave").type = ver ? "text" : "password";
+    $("#ollo").textContent = ver ? "🙈" : "👁️";
+    $("#ollo").setAttribute("aria-pressed", ver);
+    $("#ollo").setAttribute("aria-label", ver ? "Agochar a palabra" : "Amosar a palabra");
+    $("#clave").focus();
+  };
   $("#form-puerta").addEventListener("submit", e=>{
     e.preventDefault();
     // Da igual mayúsculas, minúsculas, tildes o ñ/n: "TOMATINO" = "tomatiño"
+    // y también valen las de OTRAS_CLAVES ("tomatiho", "TOMATIHO", "TomaTiho"...)
     const limpia = s => s.trim().toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
-    if (limpia($("#clave").value) === limpia(CLAVE)){
+    if ([CLAVE, ...OTRAS_CLAVES].some(c => limpia($("#clave").value) === limpia(c))){
       try{ sessionStorage.setItem("citas-ok","1"); }catch(e){}
       abrir();
     } else {
-      $("#error").textContent = "Esa no es la palabra. Prueba otra vez.";
+      $("#error").textContent = "Esa non é a palabra. Proba outra vez.";
       $("#clave").select();
     }
   });
 }
 
+// Borra de lo elegido las franjas de hoy que ya han pasado
+{
+  const kHoy = clave(hoy), p = planes[kHoy];
+  if (p){
+    for (const f of franjas(hoy)) if (yaPaso(hoy, f.h)) delete p[f.s];
+    if (diaTerminado(hoy)) delete p.otro;
+    if (!Object.keys(p).length) delete planes[kHoy];
+    guardar("citas-v1", planes);
+  }
+}
+
 pintarTodo();
+
+/* ===== Que la barra de abajo no tape nada =====
+   La barra está fija abajo y cambia de alto (lista abierta, botones de cancelar, pregunta...).
+   Cada vez que cambia, dejamos ese mismo hueco al final de la página para poder bajar
+   hasta el último botón ("Volver al calendario"). */
+const barra = document.querySelector(".resumen");
+function dejarHueco(){ document.querySelector("main").style.paddingBottom = (barra.offsetHeight + 24) + "px"; }
+if ("ResizeObserver" in window) new ResizeObserver(dejarHueco).observe(barra);
+window.addEventListener("resize", dejarHueco);
+dejarHueco();
 </script>
 </body>
 </html>
