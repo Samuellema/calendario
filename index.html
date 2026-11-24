@@ -56,7 +56,8 @@ h2{font-size:clamp(34px,9vw,48px);line-height:1;letter-spacing:-.03em;margin:40p
 .clima{margin:8px 0 6px 38px;padding:10px 14px;border-radius:12px;font-size:15px;color:#0E1B4D;background:var(--toxo-suave)}
 .clima small{display:block;font-size:13px;opacity:.8;margin-top:2px}
 /* Caixa para escribir en "Outra opción" */
-.outra{display:block;margin:8px 0 6px 38px;width:calc(100% - 38px);padding:10px 12px;font:inherit;font-size:16px;
+.outra-dentro{padding:0 12px 12px}   /* caixa de "Outra opción" dentro do seu desplegable */
+.outra{display:block;margin:0;width:100%;padding:10px 12px;font:inherit;font-size:16px;
   border:2px solid var(--toxo);border-radius:12px;background:var(--papel);color:var(--texto)}
 /* Desplegables "A Coruña" e "Costa" dentro de "Elixes ti" */
 .categoria{margin:10px 0;border:2px solid var(--linea);border-radius:14px;background:var(--papel)}
@@ -65,7 +66,18 @@ h2{font-size:clamp(34px,9vw,48px);line-height:1;letter-spacing:-.03em;margin:40p
 .categoria summary::after{content:"▾";font-size:18px;transition:transform .2s}
 .categoria[open] summary::after{transform:rotate(180deg)}
 .categoria summary small{margin-left:auto;font-weight:600;color:var(--toxo)}
+.categoria summary small.aviso-escoller{font-weight:400;font-style:italic;color:var(--granito);text-align:right;line-height:1.25;font-size:13px}   /* "Selecciona unha / ou aleatorio 🎲" en dúas liñas, en gris, mentres non escolla */
+/* Botón "🎲 Aleatorio" dentro de A Coruña e Costa */
+.aleatorio-fila{align-items:center;padding:4px 12px 8px}
+.chip.aleatorio{border-style:dashed;border-color:var(--toxo);color:var(--toxo);font-weight:600}
+.aleatorio-nota{font-size:14px;color:var(--granito)}
 .categoria .costa{padding:0 10px 8px 12px}
+/* Tempo e solpor arriba de cada desplegable */
+.datos-categoria{padding:0 12px 4px}
+/* Foto de cada sitio, debaixo do lugar */
+.foto-lugar{display:block;width:auto;max-width:100%;max-height:340px;height:auto;border-radius:12px;margin:6px 0 4px}   /* enteira, sen recortar (as fotos altas, coma o Obelisco, tamén) */
+.lugar .lugar-z{font-weight:600}
+.datos-categoria .clima, .datos-categoria .atardecer{margin-left:0}
 
 /* Sticker do venres: imaxe pequena á esquerda e o texto ao lado */
 .sticker{display:flex;align-items:center;gap:12px;margin:10px 0 6px;padding:10px 14px;border-radius:14px;background:var(--toxo-suave)}
@@ -118,7 +130,7 @@ h2{font-size:clamp(34px,9vw,48px);line-height:1;letter-spacing:-.03em;margin:40p
 /* Capa 1 (::before): la foto, con más brillo */
 .cal::before{
   content:"";position:absolute;inset:0;z-index:-1;
-  background:url("fondo-calendario.jpg") 30% 30% / cover no-repeat;   /* 1er % = izquierda-derecha (más bajo = foto más a la derecha) */
+  background:url("imaxes/fondo-calendario.jpg") 30% 30% / cover no-repeat;   /* 1er % = izquierda-derecha (más bajo = foto más a la derecha) */
   filter:brightness(1.4);   /* brillo: 1 = normal, 1.4 = 40% más brillo */
 }
 /* Capa 2 (::after): la capa clara encima de la foto, para que se lean los números */
@@ -200,7 +212,15 @@ h2{font-size:clamp(34px,9vw,48px);line-height:1;letter-spacing:-.03em;margin:40p
 /* Puerta */
 .puerta{position:fixed;inset:0;z-index:10;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:16px}
 .puerta form{max-width:360px;width:100%}
+/* Pantalla final ("Enviado!"): a foto grande, o texto e o botón "Saír" */
+.saida-caixa{max-width:380px;width:100%;text-align:center;display:flex;flex-direction:column;align-items:center}
+.saida-foto{display:block;width:100%;max-height:60vh;max-height:60dvh;object-fit:cover;border-radius:20px;margin:0 0 18px;box-shadow:0 10px 30px rgba(0,0,0,.18)}
+.saida-caixa h1{margin:0 0 6px}
+.saida-caixa p{margin:0 0 18px}
+.saida-caixa #sair{min-width:160px}
 .puerta h1{font-size:40px;line-height:1;margin:0 0 10px;color:var(--mar);letter-spacing:-.03em}
+/* Pantalla de entrada: "Días para quedar" centrado e máis arriba (separado do resto) */
+#puerta h1{text-align:center;margin:0 0 clamp(40px, 12vh, 110px);transform:translateY(-4vh)}
 .puerta p{color:var(--granito);margin:0 0 18px}
 .puerta input{
   width:100%;font:inherit;padding:12px 52px 12px 14px;border-radius:12px;border:2px solid var(--linea);
@@ -212,7 +232,25 @@ h2{font-size:clamp(34px,9vw,48px);line-height:1;letter-spacing:-.03em;margin:40p
   border:0;background:transparent;font-size:20px;cursor:pointer;border-radius:10px;opacity:.6}
 .ollo[aria-pressed="true"]{opacity:1}
 .puerta .error{color:#B3261E;min-height:1.5em;margin:0 0 8px;font-size:15px}
+/* Axitar a caixa se a palabra está mal */
+@keyframes axitar{0%,100%{transform:translateX(0)}15%,55%{transform:translateX(-10px)}35%,75%{transform:translateX(10px)}}
+.campo.axitar{animation:axitar .45s ease}
+.campo.axitar input{border-color:#B3261E}
+@media (prefers-reduced-motion:reduce){.campo.axitar{animation:none}}
+/* Botóns "Entrar" e "Pista" un ao lado do outro */
+.botons-entrada{display:flex;gap:10px;align-items:center}
+.btn.pista{background:#FFF1EC;color:#C8361F;box-shadow:inset 0 0 0 2px #E8412C;border-radius:14px}   /* distinto de "Entrar": cor tomate e esquinas menos redondas */
+.btn.pista:hover{background:#FFE2D8}
+/* Xanela da pista: fondo escurecido e unha caixa no medio (non ocupa toda a pantalla) */
+.pista-fondo{position:fixed;inset:0;z-index:30;background:rgba(10,15,40,.55);display:flex;align-items:center;justify-content:center;padding:24px}
+.pista-caixa{position:relative;background:var(--papel);border-radius:20px;padding:12px;max-width:min(86vw,380px);box-shadow:0 12px 40px rgba(0,0,0,.3)}
+.pista-caixa img{display:block;width:100%;max-height:70vh;object-fit:contain;border-radius:12px}
+.pista-pechar{position:absolute;top:-14px;right:-14px;width:40px;height:40px;border-radius:50%;border:0;cursor:pointer;
+  background:#E8412C;color:#fff;font-size:18px;font-weight:700;box-shadow:0 4px 12px rgba(0,0,0,.25)}
 [hidden]{display:none!important}
+/* Foto de benvida: tapa toda a pantalla un momentiño, coa foto no medio */
+.benvida{position:fixed;inset:0;z-index:20;background:var(--bg);display:flex;align-items:center;justify-content:center}
+.benvida img{display:block;width:90vw;height:85vh;height:85dvh;object-fit:cover;border-radius:22px}   /* case toda a pantalla, cun marxe ao redor */
 
 /* ===== Fondos de la página (se eligen con PAGINA en los ajustes del JavaScript) ===== */
 body[data-pagina]{min-height:100vh;background-attachment:fixed}
@@ -248,7 +286,7 @@ body[data-pagina="textura"]{
 body[data-pagina="foto"]{ --bg:#E9E4F2; background:#E9E4F2; }
 body[data-pagina="foto"]::before{
   content:"";position:fixed;inset:-40px;z-index:-1;
-  background:url("fondo-calendario.jpg") center / cover no-repeat;
+  background:url("imaxes/fondo-calendario.jpg") center / cover no-repeat;
   filter:blur(28px) brightness(1.25) saturate(1.2);
 }
 body[data-pagina="foto"]::after{
@@ -277,8 +315,8 @@ body[data-tema="negro"]  { --mar:#1A1A1A; --granito:#6B6B6B; --boton:#FF5C8A; --
 
 <div class="puerta" id="puerta" hidden>
   <form id="form-puerta">
-    <h1>Hola</h1>
-    <p>Isto é só para ti. Escribe a palabra secreta para entrar.</p>
+    <h1>Días para quedar</h1>
+    <p>Isto é só para ti.<br> Escribe a palabra secreta para entrar.</p>
     <label for="clave" class="sr" style="position:absolute;left:-9999px">Palabra secreta</label>
     <div class="campo">
       <input id="clave" type="password" autocomplete="off" placeholder="🍅">
@@ -286,21 +324,41 @@ body[data-tema="negro"]  { --mar:#1A1A1A; --granito:#6B6B6B; --boton:#FF5C8A; --
       <button type="button" class="ollo" id="ollo" aria-label="Amosar a palabra" aria-pressed="false">👁️</button>
     </div>
     <p class="error" id="error" role="alert"></p>
-    <button class="btn prim" type="submit">Entrar</button>
+    <div class="botons-entrada">
+      <button class="btn prim" type="submit">Entrar</button>
+      <!-- Pista: abre unha xanela coa foto (pódese pechar coa X e volver abrir) -->
+      <button class="btn pista" type="button" id="pista-btn" aria-haspopup="dialog">💡 Pista</button>
+    </div>
   </form>
+</div>
+
+<!-- Xanela da pista: non ocupa toda a pantalla e ten unha X para pechar -->
+<div class="pista-fondo" id="pista" hidden role="dialog" aria-modal="true" aria-label="Pista">
+  <div class="pista-caixa">
+    <button class="pista-pechar" type="button" id="pista-pechar" aria-label="Pechar a pista">✕</button>
+    <img src="imaxes/pista.png" alt="Pista">
+  </div>
+</div>
+
+<!-- Foto de benvida: sae un momentiño xusto despois de poñer ben a palabra secreta -->
+<div class="benvida" id="benvida" hidden>
+  <img src="imaxes/foto-entrada.png" alt="">
 </div>
 
 <!-- Pantalla final: tapa toda la página cuando la respuesta se ha enviado -->
 <div class="puerta" id="salida" hidden>
-  <div style="max-width:360px;width:100%;text-align:center">
+  <div class="saida-caixa">
+    <img class="saida-foto" src="imaxes/foto-saida.jpg" alt="">
     <h1>Enviado! 💙</h1>
-    <p>Xa me chegou a túa resposta. Xa podes pechar a páxina.</p>
+    <p>Qurocheee🫶🫶</p>
+    <!-- Ao pulsar "Saír" é cando se vai da páxina -->
+    <button class="btn prim" type="button" id="sair">Saír</button>
   </div>
 </div>
 
 <main id="app">
   <section aria-labelledby="t-cal">
-    <h2 id="t-cal">Dispoñibilidade</h2>
+    <h2 id="t-cal">Calendario</h2>
     <p class="sub">Toca un día para ver os plans.</p>
     <div class="cal">
       <div class="cal-top">
@@ -403,33 +461,65 @@ const CATEGORIAS = [
 ];
 const LUGARES = [
   // --- A Coruña ---
-  {cat:"coruna", n:"Torre de Hércules", z:"A Coruña", t:"O faro romano que segue funcionando."},
-  {cat:"coruna", n:"MUNCYT", z:"A Coruña", t:"Museo Nacional de Ciencia e Tecnoloxía."},
-  {cat:"coruna", n:"Parque de Oza", z:"A Coruña", t:"Xardíns e camiños para pasear."},
-  {cat:"coruna", n:"Parque de Eirís", z:"A Coruña", t:"Parque grande e tranquilo para pasear."},
-  {cat:"coruna", n:"Fervenza do Parque de Bens", z:"A Coruña", t:"Unha fervenza no medio do parque."},
-  {cat:"coruna", n:"Parque do Monticaño", z:"Arteixo", t:"Antiga batería militar con vistas ao mar."},
-  {cat:"coruna", n:"O Mirón", z:"Arteixo", t:"Escultura-miradoiro para enmarcar o horizonte."},
+  {cat:"coruna", n:"Torre de Hércules", z:"A Coruña", t:"", foto:"lugar-torre-hercules.png"},
+  {cat:"coruna", n:"Obelisco", z:"A Coruña", t:"", foto:"lugar-obelisco.png"},
+  {cat:"coruna", n:"Parque de Oza", z:"A Coruña", t:"", foto:"lugar-oza.png"},
+  {cat:"coruna", n:"Parque de Eirís", z:"A Coruña", t:"", foto:"lugar-eiris.webp"},
+  {cat:"coruna", n:"Fervenza do Parque de Bens", z:"A Coruña", t:"", foto:"lugar-bens.webp"},
+  {cat:"coruna", n:"Miradoiro do Monte de San Pedro", z:"A Coruña", t:"", foto:"lugar-monte-san-pedro.webp"},
+  {cat:"coruna", n:"Aquarium Finisterrae", z:"A Coruña", t:"", foto:"lugar-aquarium.webp"},
+  {cat:"coruna", n:"Miradoiro Ventá ao Atlántico", z:"A Coruña", t:"", foto:"lugar-venta-atlantico.webp"},
+  {cat:"coruna", n:"Parque da Torre de Hércules", z:"A Coruña", t:"", foto:"lugar-parque-torre.png"},
+  {cat:"coruna", n:"Castelo de Santa Cruz", z:"Oleiros", t:"", foto:"lugar-castelo-santa-cruz.png"},
+  {cat:"coruna", n:"O Mirón", z:"Arteixo", t:"", foto:"lugar-miron.png"},
+  {cat:"coruna", n:"Parque do Monticaño", z:"Arteixo", t:"", foto:"lugar-monticano.png"},
   // --- Costa (de norte a sur, e despois os de interior) ---
-  {cat:"costa", n:"Faro de Laxe", z:"Laxe", t:"Faro na punta, con vistas á praia e á ría.", lat:43.23, lng:-9.01},
-  {cat:"costa", n:"Praia dos Cristais", z:"Laxe", t:"Unha praia feita de cristaliños puídos polo mar.", lat:43.22, lng:-9.00},
-  {cat:"costa", n:"Faro Vilán", z:"Camariñas", t:"Faro sobre os cantís, con vistas ao mar aberto.", lat:43.16, lng:-9.21},
-  {cat:"costa", n:"Virxe da Barca", z:"Muxía", t:"O santuario entre as rochas, onde rompen as ondas.", lat:43.11, lng:-9.22},
-  {cat:"costa", n:"Cabo Fisterra", z:"Fisterra", t:"O “fin do mundo”: faro e solpor.", lat:42.88, lng:-9.27},
-  {cat:"costa", n:"Fervenza do Ézaro", z:"Dumbría", t:"Unha fervenza que cae directamente ao mar.", lat:42.91, lng:-9.12},
-  {cat:"costa", n:"Refuxio de Verdes", z:"Coristanco", t:"Muíños, pontes de madeira e o río Anllóns.", lat:43.21, lng:-8.74},
-  {cat:"costa", n:"Miradoiro do Picoto", t:"Miradoiro con vistas ao val.", lat:43.05, lng:-8.68}
+  {cat:"costa", n:"Faro de Laxe", z:"Laxe", t:"", lat:43.23, lng:-9.01, foto:"lugar-faro-laxe.png"},
+  {cat:"costa", n:"Faro Vilán", z:"Camariñas", t:"", lat:43.16, lng:-9.21, foto:"lugar-faro-vilan.png"},
+  {cat:"costa", n:"Miradoiro Furna do Sapo", z:"Vimianzo", t:"", lat:43.13, lng:-9.14, foto:"lugar-furna-do-sapo.webp"},
+  {cat:"costa", n:"Virxe da Barca", z:"Muxía", t:"", lat:43.11, lng:-9.22, foto:"lugar-virxe-da-barca.png"},
+  {cat:"costa", n:"Caldeiras do Castro", z:"Muxía", t:"", lat:43.03, lng:-9.16, foto:"lugar-caldeiras-castro.webp"},
+    {cat:"costa", n:"Miradoiro do Monte do Castro", z:"Muxía", t:"", foto:"lugar-monte-castro.webp"},
+  {cat:"costa", n:"Cabo Fisterra", z:"Fisterra", t:"", lat:42.88, lng:-9.27, foto:"lugar-cabo-fisterra.png"},
+  {cat:"costa", n:"Fervenza do Ézaro", z:"Dumbría", t:"", lat:42.91, lng:-9.12, foto:"lugar-fervenza-ezaro.webp"},
+  {cat:"costa", n:"Ponte Peón", z:"Dumbría", t:"", foto:"lugar-ponte-peon.webp"},
+  {cat:"costa", n:"Miradoiro de Louredo", z:"Carnota", t:"", foto:"lugar-louredo.png"},
+  {cat:"costa", n:"Faro Lariño", z:"Carnota", t:"", lat:42.77, lng:-9.13, foto:"lugar-faro-larino.png"},
+  {cat:"costa", n:"Refuxio de Verdes", z:"Coristanco", t:"", lat:43.21, lng:-8.74, foto:"lugar-refuxio-verdes.webp"},
 ];
 // Lembra que desplegables abriu ou pechou ela (para que non se pechen sós ao redebuxar a páxina)
+// e, ao abrir un ("A Coruña", "Costa" ou "Outra opción"), pecha os outros do mesmo día
 const desplegablesAbertos = {};
+let abertoPorElaAgora = null;   // que desplegable acaba de abrir ela tocando a cabeceira
+document.addEventListener("click", e=>{
+  const s = e.target.closest("details[data-cat] > summary");
+  if (s && !s.parentElement.open) abertoPorElaAgora = s.parentElement.dataset.cat;
+}, true);
 document.addEventListener("toggle", e=>{
   const d = e.target; if (!d.dataset || !d.dataset.cat) return;
   desplegablesAbertos[d.dataset.cat] = d.open;
+  if (d.open){
+    const dia = d.dataset.cat.split("|")[0];
+    document.querySelectorAll(`details[data-cat^="${dia}|"]`).forEach(outro => {
+      if (outro !== d && outro.open){ outro.open = false; desplegablesAbertos[outro.dataset.cat] = false; }
+    });
+    // Se o abriu ela (tocando a cabeceira), deixa a pantalla no PRINCIPIO deste desplegable,
+    // para ir baixando ela (ao pechar o outro, a páxina encolle e quedaba ao final)
+    if (abertoPorElaAgora === d.dataset.cat){
+      abertoPorElaAgora = null;
+      requestAnimationFrame(() => {
+        window.scrollTo({top: window.scrollY + d.getBoundingClientRect().top - 12, behavior: "auto"});
+      });
+    }
+  }
 }, true);
 
 /* SITIO_NORMAL: dónde se calcula el atardecer cuando el plan de la tarde no es
    uno de los sitios de arriba (por ejemplo "Ir tomar algo"). */
 const SITIO_NORMAL = {z:"A Coruña", lat:43.36, lng:-8.41};
+/* SITIO_COSTA: o punto máis centrado dos sitios da costa (a media de todos eles, preto de Vimianzo).
+   O tempo e o solpor do desplegable "Costa" son os deste punto. */
+const SITIO_COSTA = {z:"Costa da Morte", lat:43.10, lng:-9.03};
 /* SITIO_VENRES: para todo o que non sexa un sitio da costa (calquera día), o tempo e o solpor son os de Santa Comba */
 const SITIO_VENRES = {z:"Santa Comba", lat:43.03, lng:-8.81};
 
@@ -497,8 +587,8 @@ function bloqueadoPorSemana(d){ return semanaImposible && enEstaSemana(d); }
 const atardeceres = {};   // "2026-11-28|42.88,-9.27" -> "18:05"  (o false si falló)
 function sitioDe(plan, k){
   const lugar = LUGARES.find(l => l.n === plan);
-  if (lugar && lugar.cat === "coruna") return SITIO_NORMAL;      // sitios da Coruña: sempre o tempo da Coruña
-  if (lugar && lugar.lat != null) return lugar;                // sitios da costa: o tempo de cada sitio
+  if (lugar && lugar.cat === "coruna") return SITIO_NORMAL;      // sitios da Coruña: o tempo da Coruña
+  if (lugar && lugar.cat === "costa")  return SITIO_COSTA;       // sitios da costa: o tempo do punto central da costa
   return SITIO_VENRES;                                         // todo o demais (calquera día): Santa Comba
 }
 function atardecer(k, sitio){
@@ -554,6 +644,26 @@ function tiempo(k, sitio, hora){
     .catch(() => {});
   return null;
 }
+/* descricionLugar: o que sae debaixo do nome de cada sitio:
+   1º o lugar (z), 2º a foto (só se ten "foto" E está escollido), 3º a descrición (t). */
+function descricionLugar(l, escollido){
+  let h = "";
+  if (l.z) h += `<small class="lugar-z">${l.z}</small>`;
+  // as fotos están na carpeta "imaxes"; se a foto non existe, quítase (para que non saia unha imaxe rota)
+  if (l.foto && escollido) h += `<img class="foto-lugar" src="imaxes/${l.foto}" alt="${esc(l.n)}" onerror="this.remove()">`;
+  if (l.t) h += `<small>${l.t}</small>`;
+  return h;
+}
+
+/* datosCategoria: o tempo (ás 16:00) e o solpor que saen arriba de cada desplegable,
+   antes da lista de sitios. Un só dato para toda a categoría. */
+function datosCategoria(k, sitio){
+  const a = atardecer(k, sitio);
+  const caixas = cajaTiempo(tiempo(k, sitio, "16:00"), sitio) +
+                 (a ? `<p class="atardecer">🌅 Solpor <strong>${a}</strong> en ${sitio.z}</p>` : "");
+  return caixas ? `<div class="datos-categoria">${caixas}</div>` : "";
+}
+
 function cajaTiempo(t, sitio){
   if (!t) return "";
   return `<p class="clima">${t.icono} ${t.texto}, <strong>${t.temp} °C</strong> en ${sitio.z || sitio.n}` +
@@ -594,7 +704,7 @@ function planesDelDia(d){
       </div>`;
       if (p.tarde === ELIXO_EU){
         // Ao escoller "Elixo eu": sticker + mensaxe
-        h += `<div class="sticker"><img src="sticker-elixo-eu.png" alt="">
+        h += `<div class="sticker"><img src="imaxes/sticker-elixo-eu.png" alt="">
                 <p>${STICKER_ELIXO_EU_TEXTO}</p></div>`;
         h += cajaAtardecer;
       }
@@ -607,32 +717,41 @@ function planesDelDia(d){
           const escollido = dela.find(l => l.n === p.tarde);
           const aberto = desplegablesAbertos[`${k}|${c.id}`] ?? !!escollido;
           h += `<details class="categoria" data-cat="${k}|${c.id}"${aberto ? " open" : ""}>
-            <summary><span>${c.titulo}</span>${escollido ? `<small>${escollido.n}</small>` : ""}</summary>
+            <summary><span>${c.titulo}</span>${escollido ? `<small>${escollido.n}</small>` : (!p.tarde ? `<small class="aviso-escoller">Selecciona unha<br>ou aleatorio 🎲</small>` : "")}</summary>
+            ${datosCategoria(k, c.id === "coruna" ? SITIO_NORMAL : SITIO_COSTA)}
+            <div class="chips aleatorio-fila">
+              <button class="chip aleatorio" data-k="${k}" data-s="aleatorio" data-v="${c.id}"${dis}>🎲 Aleatorio</button>
+              ${escollido && p.azar ? `<span class="aleatorio-nota">Escolleu a páxina: <strong>${escollido.n}</strong></span>` : ""}
+            </div>
             <ol class="costa">` + dela.map(l =>
             `<li><button class="lugar" data-k="${k}" data-s="tarde" data-v="${esc(l.n)}" aria-pressed="${p.tarde===l.n}"${dis}>
               <span class="punto" aria-hidden="true"></span>
-              <span><strong>${l.n}</strong>${(l.z || l.t) ? `<small>${[l.z, l.t].filter(Boolean).join(". ")}</small>` : ""}</span></button>
-              ${p.tarde===l.n ? cajaAtardecer : ""}</li>`).join("") + `</ol></details>`;
+              <span><strong>${l.n}</strong>${descricionLugar(l, p.tarde===l.n)}</span></button>
+              </li>`).join("") + `</ol></details>`;
         }
-        // "Outra opción", fóra dos desplegables
-        h += `<ol class="costa">` +
-          `<li><button class="lugar" data-k="${k}" data-s="tarde" data-v="${esc(OUTRA)}" aria-pressed="${p.tarde===OUTRA}"${dis}>
-            <span class="punto" aria-hidden="true"></span>
-            <span><strong>${OUTRA}</strong><small>Escribe ti o plan</small></span></button>
-            ${p.tarde===OUTRA ? `<input class="outra" data-outra="${k}" type="text" maxlength="120" placeholder="Que che apetece facer?" value="${esc(p.outra || "")}">` + cajaAtardecer : ""}</li>` +
-          `</ol><p class="costa-nota"></p>`;
+        // "Outra opción": un desplegable máis, coma "A Coruña" e "Costa", cunha caixa para escribir.
+        // Ao escribir algo, queda escollida; se borra todo o texto, deixa de estar escollida.
+        {
+          const escollida = p.tarde === OUTRA && (p.outra || "").trim();
+          const aberto = desplegablesAbertos[`${k}|outra`] ?? !!escollida;
+          h += `<details class="categoria" data-cat="${k}|outra"${aberto ? " open" : ""}>
+            <summary><span>${OUTRA}</span>${escollida ? `<small>${esc(p.outra.trim())}</small>` : ""}</summary>
+            <div class="outra-dentro">
+              <input class="outra" data-outra="${k}" type="text" maxlength="120" placeholder="Que che apetece facer?" value="${esc(p.tarde === OUTRA ? (p.outra || "") : "")}"${dis}>
+            </div></details>`;
+        }
       }
     } else {
       h += `<div class="chips">` + f.ops.map(o =>
         `<button class="chip" data-k="${k}" data-s="${f.s}" data-v="${esc(o)}" aria-pressed="${p[f.s]===o}"${dis}>${o}</button>`).join("") + `</div>`;
       // O venres, ao escoller "Quedar": sticker + mensaxe
       if (d.getDay() === 5 && f.s === "tarde" && p.tarde === "Quedar"){
-        h += `<div class="sticker"><img class="fondo-branco" src="sticker-venres.png" alt="">
+        h += `<div class="sticker"><img class="fondo-branco" src="imaxes/sticker-venres.png" alt="">
                 <p>${STICKER_VENRES_TEXTO}</p></div>`;
       }
       // Calquera día, ao escoller algo pola mañá: sticker de madrugadora + mensaxe
       if (f.s === "manana" && p.manana){
-        h += `<div class="sticker"><img src="sticker-manana.png" alt="">
+        h += `<div class="sticker"><img src="imaxes/sticker-manana.png" alt="">
                 <p>${STICKER_MANA_TEXTO}</p></div>`;
       }
       h += cajaAtardecer;   // aquí la opción es un botón suelto: el recuadro va justo debajo
@@ -707,7 +826,7 @@ function elegidos(){
         const txt = (p.outra || "").trim();
         que = txt ? `outra opción: "${txt}"` : "outra opción (aínda sen escribir)";
       }
-      else if (esLugar) que = "ir a " + p.tarde;
+      else if (esLugar) que = "ir a " + p.tarde + (p.azar ? " (escollido ao chou 🎲)" : "");
       else que = p.tarde.toLowerCase();
       out.push({k, s:"tarde", texto:`${f}, 16:00: ${que}${conTiempo(t)}${a ? ` (solpor ás ${a})` : ""}`});
     }
@@ -722,7 +841,7 @@ function quitar(k, s){
   if (s === "semana"){ semanaImposible = false; guardar("citas-semana", false); pintarTodo(); return; }
   const p = planes[k]; if (!p) return;
   if (s === "otro") delete planes[k];
-  else { delete p[s]; if (s === "tarde"){ delete p.ti; delete p.outra; } }   // ao cancelar a tarde, pecha tamén "Elixes ti"
+  else { delete p[s]; if (s === "tarde"){ delete p.ti; delete p.outra; delete p.azar; } }   // ao cancelar a tarde, pecha tamén "Elixes ti"
   if (planes[k] && !Object.keys(planes[k]).length) delete planes[k];
   guardar("citas-v1", planes);
   pintarTodo();
@@ -763,6 +882,14 @@ document.addEventListener("click", e=>{
     if (bloqueadoPorSemana(deClave(k))) return;   // con "Esta semana imposible" no se eligen planes de esta semana
     const p = planes[k] || {};
     if (s==="otro"){ planes[k] = p.otro ? {} : {otro:true}; }
+    else if (s==="aleatorio"){
+      // "🎲 Aleatorio": a páxina escolle un sitio ao chou desa categoría (v = "coruna" ou "costa").
+      // Se xa había un escollido ao chou, colle outro distinto.
+      const opcions = LUGARES.filter(l => l.cat === v && l.n !== p.tarde);
+      const toca = opcions[Math.floor(Math.random() * opcions.length)];
+      if (toca){ p.tarde = toca.n; p.azar = true; p.ti = true; delete p.outra; }
+      planes[k] = p;
+    }
     else if (s==="ti"){
       // "Elixes ti": abre ou pecha a lista de sitios
       if (p.ti){ delete p.ti; if (p.tarde !== ELIXO_EU) delete p.tarde; delete p.outra; }
@@ -772,6 +899,7 @@ document.addEventListener("click", e=>{
     else {
       delete p.otro; if (p[s]===v) delete p[s]; else p[s]=v;
       if (s==="tarde"){
+        delete p.azar;                                // escolleuno ela, non o azar
         if (v === ELIXO_EU) delete p.ti;              // "Elixo eu" pecha a lista de "Elixes ti"
         if (p.tarde !== OUTRA) delete p.outra;        // se deixa "Outra opción", bórrase o texto
       }
@@ -787,6 +915,8 @@ document.addEventListener("click", e=>{
     if (s==="tarde" && v===OUTRA && planes[k] && planes[k].tarde===OUTRA){
       const caixa = document.querySelector(`[data-outra="${k}"]`); if (caixa) caixa.focus({preventScroll:true});
     }
+    // Se foi "🎲 Aleatorio", baixa ata o sitio que lle tocou para que vexa a súa foto
+    if (s==="aleatorio") irAoEscollido();
     return;
   }
   // Botón "Volver al calendario": cierra los planes del día, desmarca el día y sube al calendario
@@ -811,13 +941,48 @@ document.addEventListener("click", e=>{
     $("#panel").scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto":"smooth", block:"nearest"});
   }
 });
+/* irAoEscollido: baixa (con suavidade) ata o sitio escollido, para ver a súa foto enteira.
+   Como a foto tarda un pouco en cargar e fai o sitio máis alto, volve colocalo cando xa cargou. */
+let cancelarIrAo = null;   // para parar os recolocados pendentes do sorteo anterior
+function irAoEscollido(){
+  if (cancelarIrAo) cancelarIrAo();
+  // centrado no oco libre que queda por enriba da barra de abaixo (se non cabe, pegado arriba).
+  // Búscase de novo cada vez, porque a páxina redebúxase cando chega o tempo e a foto.
+  let parado = false;
+  const colocar = () => {
+    if (parado) return;
+    const sitio = document.querySelector('#panel .lugar[aria-pressed="true"]'); if (!sitio) return;
+    const li = sitio.closest("li") || sitio;
+    const r = li.getBoundingClientRect();
+    const libre = document.querySelector(".resumen").getBoundingClientRect().top;
+    const margen = Math.max(12, (libre - r.height) / 2);
+    window.scrollTo({top: window.scrollY + r.top - margen, behavior: "auto"});
+    const foto = li.querySelector(".foto-lugar");
+    if (foto && !foto.complete) foto.addEventListener("load", colocar, {once:true});
+  };
+  // En canto ela move a pantalla (dedo, rato ou teclado), deixamos de recolocar:
+  // así non a "devolve" ao sitio cando quere subir.
+  const eventos = ["touchstart", "wheel", "keydown", "mousedown"];
+  const parar = () => { parado = true; eventos.forEach(ev => window.removeEventListener(ev, parar, true)); };
+  eventos.forEach(ev => window.addEventListener(ev, parar, {capture:true, passive:true}));
+  cancelarIrAo = parar;
+  colocar();
+  setTimeout(colocar, 500);    // por se a páxina se redebuxou (chegou o tempo ou o solpor)
+  setTimeout(colocar, 1500);
+  setTimeout(parar, 2000);     // e despois de 2 segundos, nunca máis
+}
+
 // Caixa de "Outra opción": garda o que escribe mentres escribe (e actualiza o resumo de abaixo)
 document.addEventListener("input", e=>{
   const caixa = e.target.closest("[data-outra]"); if (!caixa) return;
-  const k = caixa.dataset.outra; if (!planes[k]) return;
-  planes[k].outra = caixa.value;
+  const k = caixa.dataset.outra;
+  const p = planes[k] || {ti:true};
+  if (caixa.value.trim()){ p.tarde = OUTRA; p.outra = caixa.value; }       // escribiu algo: "Outra opción" escollida
+  else { if (p.tarde === OUTRA) delete p.tarde; delete p.outra; }         // borrou todo: xa non está escollida
+  planes[k] = p;
   guardar("citas-v1", planes);
-  pintarResumen();
+  $("#estado").textContent = "";
+  pintarTodo();   // redebuxa (desmarca o sitio que houbese); o cursor non se perde
 });
 
 $("#prev").onclick = ()=>{ vista = new Date(vista.getFullYear(),vista.getMonth()-1,1); pintarCal(); };
@@ -892,23 +1057,38 @@ $("#enviar").onclick = async ()=>{
     if (!res.success) throw new Error(res.message);
     b.textContent = "Resposta enviada";
     estado.textContent = "Feito! Xa lle chegou.";
-    // Sale de la página: enseña la pantalla final e intenta cerrar la pestaña
-    // (los navegadores solo dejan cerrarla sola si la abrió otra página; si no, se queda la pantalla final)
-    setTimeout(()=>{
-      $("#salida").hidden = false;
-      try { window.close(); } catch(e){}
-    }, 600);
+    // Enseña a pantalla final coa foto; a páxina non se pecha ata que ela pulsa "Saír"
+    setTimeout(()=>{ $("#salida").hidden = false; }, 600);
   } catch(e){
     b.textContent = "Enviar resposta"; b.disabled = false;
     estado.textContent = "Non se puido enviar. Revisa a conexión a internet e volve premer.";
   }
 };
 
+/* ===== Botón "Saír" da pantalla final =====
+   Intenta pechar a lapela; se o navegador non o deixa (moitos móbiles non deixan),
+   vaise a unha páxina en branco, así igualmente sae da páxina. */
+$("#sair").onclick = ()=>{
+  try { window.close(); } catch(e){}
+  setTimeout(()=>{ location.replace("about:blank"); }, 300);
+};
+
 /* ===== Puerta ===== */
+/* FOTO_ENTRADA_MS: canto tempo (en milisegundos) se ve a foto de benvida despois da palabra secreta.
+   1000 = 1 segundo. Un milisegundo de verdade (1) non se chegaría a ver. */
+const FOTO_ENTRADA_MS = 300;
 function abrir(){ $("#puerta").hidden = true; }
 if (CLAVE){
   let ok=false; try{ ok = sessionStorage.getItem("citas-ok")==="1"; }catch(e){}
   if (!ok){ $("#puerta").hidden = false; setTimeout(()=>$("#clave").focus(),50); }
+  // Pista: abre a xanela coa foto; pódese pechar coa X, tocando fóra ou con Esc, e volver abrir cantas veces queira
+  const abrirPista = () => { $("#pista").hidden = false; $("#pista-pechar").focus(); };
+  const pecharPista = () => { $("#pista").hidden = true; $("#pista-btn").focus(); };
+  $("#pista-btn").onclick = abrirPista;
+  $("#pista-pechar").onclick = pecharPista;
+  $("#pista").addEventListener("click", e => { if (e.target === $("#pista")) pecharPista(); });   // tocar fóra da foto
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("#pista").hidden) pecharPista(); });
+
   // Botón del ojo: cambia la casilla entre "puntitos" (password) y texto normal
   $("#ollo").onclick = ()=>{
     const ver = $("#clave").type === "password";
@@ -925,10 +1105,17 @@ if (CLAVE){
     const limpia = s => s.trim().toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
     if ([CLAVE, ...OTRAS_CLAVES].some(c => limpia($("#clave").value) === limpia(c))){
       try{ sessionStorage.setItem("citas-ok","1"); }catch(e){}
+      // Primeiro a foto de benvida un momentiño (FOTO_ENTRADA_MS) e despois o calendario
+      $("#benvida").hidden = false;
       abrir();
+      setTimeout(()=>{ $("#benvida").hidden = true; }, FOTO_ENTRADA_MS);
     } else {
       $("#error").textContent = "Esa non é a palabra. Proba outra vez.";
       $("#clave").select();
+      // Axita a caixa cara aos lados, coma cando o móbil di "non"
+      const campo = document.querySelector("#puerta .campo");
+      campo.classList.remove("axitar"); void campo.offsetWidth; campo.classList.add("axitar");
+      if (navigator.vibrate) navigator.vibrate(120);   // nos móbiles que o permiten, vibra un pouquiño
     }
   });
 }
