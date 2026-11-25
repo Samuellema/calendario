@@ -839,6 +839,36 @@ function elegidos(){
 function lineas(){ return elegidos().map(e => e.texto); }
 function mensaje(){ return "Os meus plans para quedar:\n\n" + lineas().map(l=>"• "+l).join("\n"); }
 
+/* ===== Quen envía (só o ves ti no correo) =====
+   Nome: o que vai despois de "?de=" no enlace (ex.: .../calendario/?de=lucia).
+   Gárdase neste móbil, así que se volve entrar co enlace sen nome segue sabéndose. */
+const NOME_ENLACE = (()=>{
+  const n = (new URLSearchParams(location.search).get("de") || "").trim();
+  if (n){ try{ localStorage.setItem("citas-de", n) }catch(e){} return n; }
+  try{ const g = localStorage.getItem("citas-de"); if (g) return g + " (guardado en este móvil; entró con el enlace sin nombre)"; }catch(e){}
+  return "";
+})();
+
+/* Dispositivo: tipo de móbil/ordenador e navegador (ex.: "iPhone · Safari") */
+function dispositivo(){
+  const u = navigator.userAgent;
+  const so = /iPhone/.test(u) ? "iPhone" : /iPad/.test(u) ? "iPad"
+           : /Android/.test(u) ? "Android" + ((u.match(/Android [\d.]+; ([^;)]+)/)||[])[1] ? " (" + u.match(/Android [\d.]+; ([^;)]+)/)[1].trim() + ")" : "")
+           : /Windows/.test(u) ? "Ordenador Windows" : /Mac OS X/.test(u) ? "Mac" : /Linux/.test(u) ? "Linux" : "Desconocido";
+  const nav = /SamsungBrowser/.test(u) ? "Samsung Internet" : /Edg\//.test(u) ? "Edge" : /OPR\//.test(u) ? "Opera"
+            : /CriOS|Chrome\//.test(u) ? "Chrome" : /FxiOS|Firefox\//.test(u) ? "Firefox" : /Safari\//.test(u) ? "Safari" : "otro navegador";
+  return so + " · " + nav;
+}
+
+/* Datos para ti ao final do correo */
+function infoEnvio(){
+  const hora = new Date().toLocaleString("es-ES", {weekday:"long", day:"numeric", month:"long", hour:"2-digit", minute:"2-digit", second:"2-digit"});
+  return "\n\n———————————\n"
+       + "Quién: " + (NOME_ENLACE || "enlace sin nombre ⚠️") + "\n"
+       + "Dispositivo: " + dispositivo() + "\n"
+       + "Enviado: " + hora;
+}
+
 /* Quita un solo plan (un día y una franja) */
 function quitar(k, s){
   if (s === "semana"){ semanaImposible = false; guardar("citas-semana", false); pintarTodo(); return; }
@@ -1052,9 +1082,9 @@ $("#enviar").onclick = async ()=>{
       body: JSON.stringify({
         access_key: CLAVE_ENVIO,
         // Se xa enviou antes desde este móbil, o asunto avisa de que é unha resposta actualizada
-        subject: (leer("citas-envios") || 0) > 0 ? "Resposta actualizada: plans para quedar" : "Resposta: plans para quedar",
+        subject: ((leer("citas-envios") || 0) > 0 ? "Resposta actualizada: plans para quedar" : "Resposta: plans para quedar") + " · " + (NOME_ENLACE ? NOME_ENLACE.split(" (")[0] : "enlace sin nombre"),
         from_name: "Páxina de citas",
-        message: mensaje()
+        message: mensaje() + infoEnvio()
       })
     });
     const res = await r.json();
