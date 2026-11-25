@@ -1048,13 +1048,15 @@ $("#enviar").onclick = async ()=>{
       headers: {"Content-Type":"application/json", "Accept":"application/json"},
       body: JSON.stringify({
         access_key: CLAVE_ENVIO,
-        subject: "Resposta: plans para quedar",
+        // Se xa enviou antes desde este móbil, o asunto avisa de que é unha resposta actualizada
+        subject: (leer("citas-envios") || 0) > 0 ? "Resposta actualizada: plans para quedar" : "Resposta: plans para quedar",
         from_name: "Páxina de citas",
         message: mensaje()
       })
     });
     const res = await r.json();
     if (!res.success) throw new Error(res.message);
+    guardar("citas-envios", (leer("citas-envios") || 0) + 1);   // conta os envíos feitos desde este móbil
     b.textContent = "Resposta enviada";
     estado.textContent = "Feito! Xa lle chegou.";
     // Enseña a pantalla final coa foto; a páxina non se pecha ata que ela pulsa "Saír"
