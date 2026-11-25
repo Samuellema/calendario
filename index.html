@@ -1078,7 +1078,7 @@ $("#sair").onclick = ()=>{
 /* ===== Puerta ===== */
 /* FOTO_ENTRADA_MS: canto tempo (en milisegundos) se ve a foto de benvida despois da palabra secreta.
    1000 = 1 segundo. Un milisegundo de verdade (1) non se chegaría a ver. */
-const FOTO_ENTRADA_MS = 300;
+const FOTO_ENTRADA_MS = 500;
 function abrir(){ $("#puerta").hidden = true; }
 if (CLAVE){
   let ok=false; try{ ok = sessionStorage.getItem("citas-ok")==="1"; }catch(e){}
