@@ -811,13 +811,13 @@ let semanaImposible = leer("citas-semana") === true;
 
 function elegidos(){
   const out = [];
-  if (semanaImposible) out.push({k:"semana", s:"semana", texto:"Esta semana imposible 😢"});
+  if (semanaImposible) out.push({k:"semana", s:"semana", id:"semana", texto:"Esta semana imposible 😢"});
   Object.keys(planes).sort().forEach(k=>{
     const p = planes[k], f = fechaLarga(deClave(k));
-    if (p.otro){ out.push({k, s:"otro", texto:`${f}: mellor outro día`}); return; }
+    if (p.otro){ out.push({k, s:"otro", id:`${k}|otro`, texto:`${f}: mellor outro día`}); return; }
     // El tiempo previsto, si ya lo tenemos, se añade al texto (y así llega también en el correo)
     const conTiempo = t => t ? ` (${t.texto.toLowerCase()}, ${t.temp} °C)` : "";
-    if (p.manana) out.push({k, s:"manana", texto:`${f}, 10:00: ${p.manana.toLowerCase()}${conTiempo(tiempo(k, sitioDe(null, k), "10:00"))}`});
+    if (p.manana) out.push({k, s:"manana", id:`${k}|manana|${p.manana}`, texto:`${f}, 10:00: ${p.manana.toLowerCase()}${conTiempo(tiempo(k, sitioDe(null, k), "10:00"))}`});
     if (p.tarde){
       const esLugar = LUGARES.some(l=>l.n===p.tarde);   // "ir a ..." para os sitios da lista
       const sinDatos = deClave(k).getDay() === 5 || SIN_DATOS.includes(p.tarde);   // venres, "Elixo eu" e "Outra opción": sen tempo nin solpor
@@ -831,13 +831,30 @@ function elegidos(){
       }
       else if (esLugar) que = "ir a " + p.tarde + (p.azar ? " (escollido ao chou 🎲)" : "");
       else que = p.tarde.toLowerCase();
-      out.push({k, s:"tarde", texto:`${f}, 16:00: ${que}${conTiempo(t)}${a ? ` (solpor ás ${a})` : ""}`});
+      out.push({k, s:"tarde", id:`${k}|tarde|${p.tarde}|${(p.outra || "").trim()}`, texto:`${f}, 16:00: ${que}${conTiempo(t)}${a ? ` (solpor ás ${a})` : ""}`});
     }
   });
   return out;
 }
 function lineas(){ return elegidos().map(e => e.texto); }
-function mensaje(){ return "Os meus plans para quedar:\n\n" + lineas().map(l=>"• "+l).join("\n"); }
+/* Último envío: o que mandou a última vez desde este móbil (para saber que quitou ou engadiu) */
+function ultimoEnvio(){ const u = leer("citas-ultimo-envio"); return Array.isArray(u) ? u : null; }
+
+function mensaje(){
+  const es = elegidos(), antes = ultimoEnvio();
+  let m = es.length
+    ? "Os meus plans para quedar:\n\n" + es.map(e=>"• "+e.texto).join("\n")
+    : "Quitei todos os plans, agora mesmo non podo ningún día 😢";
+  if (antes){
+    const ids = new Set(es.map(e=>e.id)), idsAntes = new Set(antes.map(e=>e.id));
+    const engadidos = es.filter(e=>!idsAntes.has(e.id)), quitados = antes.filter(e=>!ids.has(e.id));
+    m += "\n\nCambios desde o último envío:\n"
+       + (engadidos.length || quitados.length
+           ? [...engadidos.map(e=>"➕ Engadido: "+e.texto), ...quitados.map(e=>"➖ Quitado: "+e.texto)].join("\n")
+           : "(ningún, enviou o mesmo)");
+  }
+  return m;
+}
 
 /* ===== Quen envía (só o ves ti no correo) =====
    Nome: o que vai despois de "?de=" no enlace (ex.: .../calendario/?de=lucia).
@@ -889,7 +906,8 @@ function pintarResumen(){
   $("#lista").innerHTML = es.length
     ? es.map(e => `<li><span>${esc(e.texto)}</span>${modoQuitar ? `<button class="quitar" data-qk="${e.k}" data-qs="${e.s}">✕ Quitar</button>` : ""}</li>`).join("")
     : `<li style="list-style:none;margin-left:-20px">Toca un plan para engadilo aquí.</li>`;
-  $("#enviar").disabled = !es.length;
+  const antes = ultimoEnvio();
+  $("#enviar").disabled = !es.length && !(antes && antes.length);   // se xa enviara algo e o quitou todo, pode avisar
   // Botones de cancelar: ninguno si no hay nada, "Cancelar" si hay 1, "Cancelar" + "Cancelar todo" si hay 2 o más
   $("#cancelar").hidden = es.length === 0;
   $("#cancelar-todo").hidden = es.length < 2;
@@ -1090,6 +1108,7 @@ $("#enviar").onclick = async ()=>{
     const res = await r.json();
     if (!res.success) throw new Error(res.message);
     guardar("citas-envios", (leer("citas-envios") || 0) + 1);   // conta os envíos feitos desde este móbil
+    guardar("citas-ultimo-envio", elegidos().map(e=>({id:e.id, texto:e.texto})));   // o que acaba de mandar
     b.textContent = "Resposta enviada";
     estado.textContent = "Feito! Xa lle chegou.";
     // Enseña a pantalla final coa foto; a páxina non se pecha ata que ela pulsa "Saír"
